@@ -1,4 +1,3 @@
-from c31Geometry2 import *
 class Vaisseau(Oval):
     def __init__(self, canvas, origine, vitesse, vie, petitRayon, grandRayon):
         self.vitesse = vitesse
