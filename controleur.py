@@ -2,6 +2,7 @@ from vue import JeuVue, MenueVue
 from modeles import Vaisseau, Projectile, Partie
 from c31Geometry2 import *
 import csv
+from time import sleep
 class MenuControleur:
     def __init__(self, root, jeuControleur):
         self.jeuControleur = jeuControleur
@@ -69,8 +70,78 @@ class JeuControleur:
         return self.partieEnCours
 
     def __defineEvent(self):
-        self.vue.setListen("<ButtonPress-1>", self.pressed)
-        self.vue.setListen("<ButtonRelease-1>", self.released)
+        self.vue.setListen("<ButtonPress-1>", self.buttonPressed)
+        self.vue.setListen("<ButtonRelease-1>", self.buttonReleased())
+        self.vue.setListen("<Motion>", self.isMoving)
+    
+    def buttonPressed(self):
+        self.pressed = True
+        self.released = False
+
+    def buttonReleased(self):
+        self.pressed = False
+        self.released = True
+
+    def isMoving(self, event):
+        self.isMoving = True
+        self.x = event.x
+        self.y = event.y
+        if not self.partieEnCours:
+            self.partie = Partie()
+            self.debuter()
+
+    def debuter(self):
+        self.partieEnCours = True
+        if self.partieEnCours:
+            self.e = LoopEvent(self.vue.root, self.roulerJeu, 10)
+            self.e.start()
+
+    def roulerJeu(self):
+        if not self.verifierCollision():
+            self.deplacementOvnis()
+            self.afficherPouvoir()
+            self.deplacerVaisseau(self.x, self.y)
+        else:
+            self.terminerPartie()
+
+    def terminerPartie(self):
+        self.vue.destroy(self.vue.root)   #!!! A voir dependament de la place du canvas    #self.vue.destroy(self.canvasJeu.canvas)\
+        self.e.stop()
+        self.genererJeu()
+        sleep(1)
+
+    def verifierCollision(self):
+        vaisseauX = self.vaisseau.getOrigine().x
+        vaisseauY = self.vaisseau.getOrigine().y
+
+        #! Verifier les collisions avec les ovnis ici!
+
+    def afficherPouvoir(self):
+        ##Afficher les pouvoirs aleatoirement sur le canvas
+        return True
+
+    def deplacementOvnis(self):
+        for ovni in self.ovnis:
+            x = self.ovnis[ovni].getOrigine().x
+            y = self.ovnis[ovni].getOrigine().y
+            deplacement = self.deplacementLogique(ovni, x, y)
+
+            self.ovnis[ovni].translateTo(deplacement)
+            self.ovnis[ovni].modificationPos(deplacement)
+            self.vue.draw(self.ovnis)
+
+    def deplacementLogique(self, ovni, x, y):
+        #! Deplacement logique des ovnis ici!
+        return True
+
+    def deplacerVaisseau(self, x, y):
+        deplacement = Vecteur(x, y)
+        self.vaisseau.translateTo(deplacement)
+        self.vaisseau.modificationPos(deplacement)
+        self.vue.draw(self.vaisseau)
+
+
+
 
 
 
