@@ -36,12 +36,12 @@ class Projectile(Oval):
         self.vitesse = vitesse
         
 class Vaisseau(Oval):
-    def __init__(self, canvas, origine, vitesse, vie, petitRayon, grandRayon):
+    def __init__(self, canvas, vitesse, vie):
         self.vitesse = vitesse
         self.vie = vie
-        self.petitRayon = petitRayon
-        self.grandRayon = grandRayon
-        super().__init__(canvas, origine, petitRayon, grandRayon, "red", "red", 0)
+        self.petitRayon = 10
+        self.grandRayon = 15
+        super().__init__(canvas, Vecteur(300, 300), self.petitRayon, self.grandRayon, "red", "red", 0)
 
     def getOrigine(self) -> Vecteur:
         return super().getOrigine()

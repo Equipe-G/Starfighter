@@ -1,5 +1,5 @@
 from vue import JeuVue, MenueVue
-from modeles import Vaisseau, Projectile
+from modeles import Vaisseau, Projectile, Partie
 from c31Geometry2 import *
 import csv
 class MenuControleur:
@@ -39,3 +39,67 @@ class MenuControleur:
                 self.string += "     "
             self.string += "\n"
         self.vue.setScore(self.string)
+
+class JeuControleur:
+    def __init__(self, root):
+        self.root = root
+        self.vue = JeuVue(root)
+        self.vue.setNom(self.partie.nom)
+        self.vue.setDif(self.partie.difficulte)
+        self.genererJeu()
+
+    def genererJeu(self):
+        self.partieEnCours = False
+        self.canvasJeu = CanvasJeu(self.root)
+        self.vaisseau = Vaisseau(self.canvasJeu, 1, 100)
+        self.projectile = Projectile(self.canvasJeu, self.vaisseau.getOrigine())
+        self.ovnis = []
+        self.isMoving = False
+        self.pressed = False
+        self.released = False
+        #! Generer les ovnis ici!
+        for i in range(0, 20):
+            self.ovnis.append(Ovni(self.canvasJeu))
+        self.vue.draw(self.vaisseau)
+        self.vue.draw(self.projectile)
+        self.vue.draw(self.ovnis)
+        self.__defineEvent()
+
+    def demarrerPartie(self):
+        return self.partieEnCours
+
+    def __defineEvent(self):
+        self.vue.setListen("<ButtonPress-1>", self.pressed)
+        self.vue.setListen("<ButtonRelease-1>", self.released)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
