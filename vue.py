@@ -41,18 +41,27 @@ class MenuVue:
 class JeuVue:
     """ cette classe permet de définir l'aparence de l'espace de jeu
     """
-    def __init__(self, root):
+    def __init__(self, root, canvas,imgFond):
         """
         :param root: Widget parent de notre boucle
         :type  root: tk.Widget
         """
         self.root = root
-        self.nom = tk.Label(root, text="") # a aller chercher au debut de la partie et save
-        self.score = tk.Label(root, text="") # a changer tout au long de la partie et a save a la fin 
-        self.vie = tk.Label(root, text="") # a changer tout au long de la partie
+        self.nom = "" # a aller chercher au debut de la partie et save
+        self.score = "" # a changer tout au long de la partie et a save a la fin 
+        self.vie = "" # a changer tout au long de la partie
+        self.canvas = canvas
+        self.imgFond = tk.Label(root,image=imgFond) 
         #self.nom.grid()
         #self.vie.grid()
         #self.score.grid()
+
+    def drawEspaceJeu(self):
+        self.canvas.pack()
+        self.canvas.create_image(0,0,image=self.imgFond, anchor="nw")
+        self.canvas.create_text(0,0,text=self.nom, font=("Helvetica")) #voir les coordonnées
+        self.canvas.create_text(200,0,text=self.score,font=("Helvetica")) # voir les coordonnées
+        self.canvas.create_text(250,0,text=self.vie,font=("Helvetica")) # voir les coordonnées
 
     def destroy(self, canvas):
         """ ferme l'espace de jeu
@@ -75,7 +84,7 @@ class JeuVue:
         Args:
             nom (String) : le nom du joueur chosi  
         """
-        self.nom.config(text= "Nom du joueur : " + nom )
+        self.nom = "Nom du joueur : " + nom 
 
 
     def setScore(self,score) :
@@ -84,7 +93,7 @@ class JeuVue:
         Args:
             temp(String(format)) : le score de la partie
         """
-        self.score.config(text= str(score))
+        self.score = "score: " + str(score)
 
     def setVie(self,vie) :
         """ change le champ vie
@@ -92,7 +101,7 @@ class JeuVue:
         Args:
             temp(String(format)) : les point de vie du vaisseau
         """
-        self.vie.config(text= "Point de vie : " + str(vie) +"%")
+        self.vie = "Point de vie : " + str(vie) +"%"
 
     def demanderNom(self,root) :
         """ demande le nom de l'utulisateur dans un pop up
@@ -105,43 +114,13 @@ class JeuVue:
         """
         return simpledialog.askstring("Input","Quel est votre nom",parent=root)
 
-    def drawVaiseau(self,vaiseau) :
-        """Permet de dessiner le vaiseau
+    def drawObjet(self,objet) :
+        """Permet de dessiner tout les objet ayant un sprite valide(une image) 
         """
         if hasattr(self, 'id'):
             self.canvas.delete(self.id)
             
-        #self.id = self.canvas.create_image(image=vaisseau) voir les paramètre
+        self.id = self.canvas.create_image(objet.getOrigine().x,objet.getOrigine().y,image=objet.getImg) #voir les paramètre
         
         self.canvas.update()
-
-    def drawVaiseau(self,ovnis) :
-        """Permet de dessiner les ovnis
-        """
-        if hasattr(self, 'id'):
-            self.canvas.delete(self.id)
-            
-        #self.id = self.canvas.create_image((x_coordinate, y_coordinate)image=ovnis) voir les paramètre
-        
-        self.canvas.update()
-
-    def drawVaiseau(self,asteroide) :
-        """Permet de dessiner les asteroide
-        """
-        if hasattr(self, 'id'):
-            self.canvas.delete(self.id)
-            
-        #self.id = self.canvas.create_image((x_coordinate, y_coordinate)image=asteroide) voir les paramètre
-        
-        self.canvas.update()
-
-
-    def drawVaiseau(self,missile) :
-        """Permet de dessiner les missile
-        """
-        if hasattr(self, 'id'):
-            self.canvas.delete(self.id)
-            
-        #self.id = self.canvas.create_image((x_coordinate, y_coordinate)image=missile) voir les paramètre
-        
-        self.canvas.update()
+ 
