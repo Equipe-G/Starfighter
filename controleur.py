@@ -1,4 +1,4 @@
-from vue import JeuVue, MenueVue
+from vue import JeuVue, MenuVue
 from modeles import Vaisseau, Projectile, Partie
 from c31Geometry2 import *
 import csv
@@ -134,7 +134,28 @@ class JeuControleur:
         #! Deplacement logique des ovnis ici!
         return True
 
-    def deplacerVaisseau(self, x, y):
+    def deplacementLogiqueVaisseau(self, x, y):
+        if x > self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au nord-est
+            self.deplacementVaisseau(self.vaisseau.get_origine().x +1, self.vaisseau.get_origine().y +1)
+        elif x == self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au nord
+            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y +1)
+        elif x < self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au nord-ouest
+            self.deplacementVaisseau(self.vaisseau.get_origine().x -1, self.vaisseau.get_origine().y +1)
+        elif x < self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est à l'ouest
+            self.deplacementVaisseau(self.vaisseau.get_origine().x -1, self.vaisseau.get_origine().y)
+        elif x < self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au sud-ouest
+            self.deplacementVaisseau(self.vaisseau.get_origine().x -1, self.vaisseau.get_origine().y -1)
+        elif x == self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au sud
+            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y -1)
+        elif x > self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au sud-est
+            self.deplacementVaisseau(self.vaisseau.get_origine().x +1, self.vaisseau.get_origine().y -1)
+        elif x > self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est à l'est
+            self.deplacementVaisseau(self.vaisseau.get_origine().x +1, self.vaisseau.get_origine().y)
+        elif x == self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est sur l'origine du vaisseau
+            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y)
+            
+
+    def deplacementVaisseau(self,x,y):
         deplacement = Vecteur(x, y)
         self.vaisseau.translateTo(deplacement)
         self.vaisseau.modificationPos(deplacement)
