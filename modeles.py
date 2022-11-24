@@ -1,12 +1,14 @@
-# -*- coding: utf8 -*-
 from c31Geometry2 import *
+from PIL import ImageTk, Image
 
 class objetVolant(Oval): 
-    def __init__(self, canvas, vitesse, vie, petitRayon, grandRayon, origine):
+    def __init__(self, canvas, vitesse, vie, petitRayon, grandRayon, origine, lienImage):
         self.vitesse = vitesse
         self.vie = vie
         self.petitRayon = petitRayon
         self.grandRayon = grandRayon
+        self.image = Image.open(lienImage)
+        imageTk = ImageTk.PhotoImage(self.image)
         super().__init__(canvas, origine, self.petitRayon, self.grandRayon, "white", "white", 0)
 
     def getOrigine(self) -> Vecteur:
@@ -41,9 +43,11 @@ class objetVolant(Oval):
         self.grandRayon = grandRayon
         
 class PowerUp(Cercle):
-    def __init__(self, canvas, origine):
+    def __init__(self, canvas, origine, lienImage):
         self.vitesse = 3
         self.rayon = 10
+        self.image = Image.open(lienImage)
+        imageTk = ImageTk.PhotoImage(self.image)
         super().__init__(canvas, origine, self.rayon, "white", "white", 0)
     
     def getOrigine(self) -> Vecteur:
@@ -110,4 +114,6 @@ class Ovni(objetVolant):
 class asteroides(objetVolant):
     def __init__(self, canvas, origine):
         super().__init__(canvas, 3, 1, 20, 20, origine)
+
+#class boss(Ovni)
 
