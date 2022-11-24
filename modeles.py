@@ -108,8 +108,12 @@ class Vaisseau(objetVolant):
         super().__init__(canvas, 10, 100, 50, 100 , Vecteur(100,500))
 
 class Ovni(objetVolant):
-    def __init__(self, canvas, origine):
+    def __init__(self, canvas, origine, maxY):
+        self.maxY = maxY
         super().__init__(canvas, 5, 10, 20, 50 , origine)
+        
+    def getMaxY(self):
+        return self.maxY
 
 class asteroides(objetVolant):
     def __init__(self, canvas, origine):
