@@ -4,6 +4,7 @@ from c31Geometry2 import *
 from tkinter import*
 
 
+
 class MenuVue:
     """ cette classe permet de définir l'aparence du menu
     """
@@ -35,13 +36,13 @@ class MenuVue:
         self.btn_voirScore.pack()
         self.btn_quitApp.pack() 
 
-    def destroy(self, canvas):
-        canvas.destroy()
+    def destroy(self):
+        self.canvas.destroy()
 
 class JeuVue:
     """ cette classe permet de définir l'aparence de l'espace de jeu
     """
-    def __init__(self, root, canvas,imgFond):
+    def __init__(self, root,imgFond):
         """
         :param root: Widget parent de notre boucle
         :type  root: tk.Widget
@@ -50,7 +51,7 @@ class JeuVue:
         self.nom = "" # a aller chercher au debut de la partie et save
         self.score = "" # a changer tout au long de la partie et a save a la fin 
         self.vie = "" # a changer tout au long de la partie
-        self.canvas = canvas
+        self.canvas = tk.Canvas(root, width=600, height=400, bg='white')
         self.imgFond = tk.Label(root,image=imgFond) 
         #self.nom.grid()
         #self.vie.grid()
