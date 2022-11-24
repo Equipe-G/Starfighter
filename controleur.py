@@ -172,7 +172,7 @@ class JeuControleur:
     
     def deplacementAsteroide(self):
         for a in self.asteroide :
-            newPos = Vecteur(a.getOrigine().x, a.getOrigine().y - 1)
+            newPos = Vecteur(a.getOrigine().x, a.getOrigine().y + 1)
             a.modificationPos(newPos)
             
     def initOvni(self):
@@ -181,7 +181,29 @@ class JeuControleur:
             maxRndY = random.randint(15, 95)
             position = Vecteur(rndX, -20)
             o.modificationPos(position)
-        
+            
+    def deplacementOvni(self):
+        for o in self.ovnis:
+            if o.getOrigine().y < o.getMaxY() :
+                newPos = Vecteur(o.getOrigine().x, +1)
+                o.modificationPos(newPos)
+            else :
+                rndDirection = random.randint(0,1)
+                rndWobble = random.randint(o.getOrigine().y -15, o.getOrigine().y +15)
+                if rndDirection == 0 : #vers la gauche
+                    if rndWobble == o.getOrigine().y : #no wobble
+                        newPos = Vecteur(o.getOrigine().x - 1, o.getOrigine().y)
+                    elif rndWobble < o.getOrigine().y : #wobble vers le haut
+                        newPos = Vecteur(o.getOrigine().x - 1, o.getOrigine().y-1)
+                    elif rndWobble > o.getOrigine().y : #wobble vers le bas
+                        newPos = Vecteur(o.getOrigine().x -1, o.getOrigine().y +1)
+                else : #vers la droite
+                    if rndWobble == o.getOrigine().y : #no wobble
+                        newPos = Vecteur(o.getOrigine().x + 1, o.getOrigine().y)
+                    elif rndWobble < o.getOrigine().y : #wobble vers le haut
+                        newPos = Vecteur(o.getOrigine().x + 1, o.getOrigine().y - 1)
+                    elif rndWobble > o.getOrigine().y : #wobble vers le bas
+                        newPos = Vecteur(o.getOrigine().x + 1, o.getOrigine().y + 1)
 
 
 
