@@ -1,3 +1,4 @@
+from tokenize import String
 from c31Geometry2 import *
 from PIL import ImageTk, Image
 
@@ -7,8 +8,9 @@ class objetVolant(Oval):
         self.vie = vie
         self.petitRayon = petitRayon
         self.grandRayon = grandRayon
-        self.image = Image.open(lienImage)
-        imageTk = ImageTk.PhotoImage(self.image)
+        self.imageBase = Image.open(lienImage)
+        self.image = self.imageBase.resize((50,50), Image.ANTIALIAS)
+        self.imageTk = ImageTk.PhotoImage(self.image)
         super().__init__(canvas, origine, self.petitRayon, self.grandRayon, "white", "white", 0)
 
     def getOrigine(self) -> Vecteur:
@@ -46,8 +48,9 @@ class PowerUp(Cercle):
     def __init__(self, canvas, origine, lienImage):
         self.vitesse = 3
         self.rayon = 10
-        self.image = Image.open(lienImage)
-        imageTk = ImageTk.PhotoImage(self.image)
+        self.imageBase = Image.open(lienImage)
+        self.image = self.imageBase.resize((50,50), Image.ANTIALIAS)
+        self.imageTk = ImageTk.PhotoImage(self.image)
         super().__init__(canvas, origine, self.rayon, "white", "white", 0)
     
     def getOrigine(self) -> Vecteur:
@@ -74,6 +77,9 @@ class Projectile(Oval):
         self.petitRayon = 5
         self.grandRayon = 10
         self.vitesse = 1
+        self.imageBase = Image.open("<Image/Lazer.png>")
+        self.image = self.imageBase.resize((50,50), Image.ANTIALIAS)
+        self.imageTk = ImageTk.PhotoImage(self.image)
         super().__init__(canvas, origine, self.petitRayon, self.grandRayon, "white", "white, 0")
 
     def getOrigine(self) -> Vecteur:
@@ -105,19 +111,22 @@ class Projectile(Oval):
         
 class Vaisseau(objetVolant):
     def __init__(self, canvas):
-        super().__init__(canvas, 10, 100, 50, 100 , Vecteur(100,500))
+        self.lienImage = "<Image/Vaisseau.png>"
+        super().__init__(canvas, 10, 100, 50, 100 , Vecteur(100,500), self.lienImage)
 
 class Ovni(objetVolant):
     def __init__(self, canvas, origine, maxY):
         self.maxY = maxY
-        super().__init__(canvas, 5, 10, 20, 50 , origine)
+        self.lienImage = "<Image/Alien.png>"
+        super().__init__(canvas, 5, 10, 20, 50 , origine, self.lienImage)
         
     def getMaxY(self):
         return self.maxY
 
 class asteroides(objetVolant):
     def __init__(self, canvas, origine):
-        super().__init__(canvas, 3, 1, 20, 20, origine)
+        self.lienImage = "<Image/asteroide.png>" 
+        super().__init__(canvas, 3, 1, 20, 20, origine, self.lienImage)
 
 #class boss(Ovni)
 
