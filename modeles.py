@@ -1,4 +1,3 @@
-from tokenize import String
 from c31Geometry2 import *
 from PIL import ImageTk, Image
 
@@ -9,12 +8,12 @@ class objetVolant(Oval):
         self.petitRayon = petitRayon
         self.grandRayon = grandRayon
         self.imageBase = Image.open(lienImage)
-        self.image = self.imageBase.resize((50,50), Image.ANTIALIAS)
+        self.image = self.imageBase.resize((200,200), Image.ANTIALIAS)
         self.imageTk = ImageTk.PhotoImage(self.image)
         super().__init__(canvas, origine, self.petitRayon, self.grandRayon, "white", "white", 0)
 
     def getOrigine(self) -> Vecteur:
-        return super().getOrigine()
+        return super().get_position()
 
     def modificationPos(self, position: Vecteur):
         self.origine = position
@@ -54,7 +53,7 @@ class PowerUp(Cercle):
         super().__init__(canvas, origine, self.rayon, "white", "white", 0)
     
     def getOrigine(self) -> Vecteur:
-        return super().getOrigine()
+        return super().get_position()
 
     def modificationPos(self, position: Vecteur):
         self.origine = position
@@ -77,7 +76,7 @@ class Projectile(Oval):
         self.petitRayon = 5
         self.grandRayon = 10
         self.vitesse = 1
-        self.imageBase = Image.open("<Image/Lazer.png>")
+        self.imageBase = Image.open("Image/Lazer.png")
         self.image = self.imageBase.resize((50,50), Image.ANTIALIAS)
         self.imageTk = ImageTk.PhotoImage(self.image)
         super().__init__(canvas, origine, self.petitRayon, self.grandRayon, "white", "white, 0")
@@ -87,7 +86,7 @@ class Projectile(Oval):
         Returns:
             Vecteur: Origine du projectile
         """
-        return super().get_origine()
+        return super().get_position()
 
     def modificationPos(self, position: Vecteur):
         """Définit l'origine du carré et le deplace
@@ -111,13 +110,13 @@ class Projectile(Oval):
         
 class Vaisseau(objetVolant):
     def __init__(self, canvas):
-        self.lienImage = "<Image/Vaisseau.png>"
-        super().__init__(canvas, 10, 100, 50, 100 , Vecteur(100,500), self.lienImage)
+        self.lienImage = "Image/Vaisseau.png"
+        super().__init__(canvas, 10, 100, 50, 100 , Vecteur(500,900), self.lienImage)
 
 class Ovni(objetVolant):
     def __init__(self, canvas, origine, maxY):
         self.maxY = maxY
-        self.lienImage = "<Image/Alien.png>"
+        self.lienImage = "Image/Alien.png"
         super().__init__(canvas, 5, 10, 20, 50 , origine, self.lienImage)
         
     def getMaxY(self):
@@ -125,8 +124,15 @@ class Ovni(objetVolant):
 
 class asteroides(objetVolant):
     def __init__(self, canvas, origine):
-        self.lienImage = "<Image/asteroide.png>" 
+        self.lienImage = "Image/asteroide.png" 
         super().__init__(canvas, 3, 1, 20, 20, origine, self.lienImage)
 
+class Background:
+    def __init__(self, canvas):
+        self.imageBase = Image.open("Image/background.gif")
+        self.image = self.imageBase.resize((1000,1000), Image.ANTIALIAS)
+        self.imageTk = ImageTk.PhotoImage(self.image)
+        #super().__init__(canvas, Vecteur(0,0), 1000, 1000, "white", "white", 0)
+        
 #class boss(Ovni)
 
