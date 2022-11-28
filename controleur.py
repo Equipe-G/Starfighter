@@ -1,12 +1,12 @@
 from vue import JeuVue, MenuVue
-from modeles import Vaisseau, Projectile, Partie
+from modeles import Vaisseau, Projectile, Background
 from c31Geometry2 import *
 import csv
 from time import sleep
 class MenuControleur:
     def __init__(self, root, jeuControleur):
         self.jeuControleur = jeuControleur
-        self.vue = MenuVue(root, self.nouvelleSession, self.afficherScore, self.quitter)
+        #self.vue = MenuVue(root, self.nouvelleSession, self.afficherScore, self.quitter)
 
     def commencerJeu(self):
         self.vue.draw()
@@ -44,26 +44,31 @@ class MenuControleur:
 class JeuControleur:
     def __init__(self, root):
         self.root = root
+        
         self.vue = JeuVue(root)
-        self.vue.setNom(self.partie.nom)
-        self.vue.setDif(self.partie.difficulte)
-        self.genererJeu()
+        #self.vue.setNom(self.partie.nom)
+        #self.vue.setDif(self.partie.difficulte)
+        #self.genererJeu()
 
     def genererJeu(self):
         self.partieEnCours = False
-        self.canvasJeu = CanvasJeu(self.root)
-        self.vaisseau = Vaisseau(self.canvasJeu, 1, 100)
-        self.projectile = Projectile(self.canvasJeu, self.vaisseau.getOrigine())
+        self.canvasJeu = self.vue.getCanvas()
+        self.background = Background(self.canvasJeu)
+        self.vue.drawEspaceJeu()
+        self.vue.drawFond(self.background.imageTk)
+        self.vaisseau = Vaisseau(self.canvasJeu)
+        self.vue.drawObjet(self.vaisseau)
+        #self.projectile = Projectile(self.canvasJeu, self.vaisseau.getOrigine())
         self.ovnis = []
         self.isMoving = False
         self.pressed = False
         self.released = False
         #! Generer les ovnis ici!
-        for i in range(0, 20):
-            self.ovnis.append(Ovni(self.canvasJeu))
-        self.vue.draw(self.vaisseau)
-        self.vue.draw(self.projectile)
-        self.vue.draw(self.ovnis)
+        #for i in range(0, 20):
+            #self.ovnis.append(Ovni(self.canvasJeu))
+        #self.vue.drawObjet(self.vaisseau)
+        #self.vue.drawObjet(self.projectile)
+        #self.vue.drawObjet(self.ovnis)
         self.__defineEvent()
 
     def demarrerPartie(self):
@@ -87,7 +92,7 @@ class JeuControleur:
         self.x = event.x
         self.y = event.y
         if not self.partieEnCours:
-            self.partie = Partie()
+            #self.partie = Partie()
             self.debuter()
 
     def debuter(self):
@@ -159,7 +164,7 @@ class JeuControleur:
         deplacement = Vecteur(x, y)
         self.vaisseau.translateTo(deplacement)
         self.vaisseau.modificationPos(deplacement)
-        self.vue.draw(self.vaisseau)
+        self.vue.drawObjet(self.vaisseau)
 
 
 

@@ -42,7 +42,7 @@ class MenuVue:
 class JeuVue:
     """ cette classe permet de définir l'aparence de l'espace de jeu
     """
-    def __init__(self, root,imgFond):
+    def __init__(self, root): #! Mettre imgFond en parametre
         """
         :param root: Widget parent de notre boucle
         :type  root: tk.Widget
@@ -51,23 +51,27 @@ class JeuVue:
         self.nom = "" # a aller chercher au debut de la partie et save
         self.score = "" # a changer tout au long de la partie et a save a la fin 
         self.vie = "" # a changer tout au long de la partie
-        self.canvas = tk.Canvas(root, width=600, height=400, bg='white')
-        self.imgFond = tk.Label(root,image=imgFond) 
+        self.canvas = tk.Canvas(root, width=1000, height=1000, bg='white') 
         #self.nom.grid()
         #self.vie.grid()
         #self.score.grid()
 
     def drawEspaceJeu(self):
         self.canvas.pack()
-        self.canvas.create_image(0,0,image=self.imgFond, anchor="nw")
         self.canvas.create_text(0,0,text=self.nom, font=("Helvetica")) #voir les coordonnées
         self.canvas.create_text(200,0,text=self.score,font=("Helvetica")) # voir les coordonnées
         self.canvas.create_text(250,0,text=self.vie,font=("Helvetica")) # voir les coordonnées
+
+    def drawFond(self,fond):
+        self.canvas.create_image(0,0,image=fond, anchor="nw")
 
     def destroy(self, canvas):
         """ ferme l'espace de jeu
         """
         canvas.destroy()
+        
+    def getCanvas(self):
+        return self.canvas
 
     def setListen(self, eventName, command) :
         """ Ecoute les evenement qui ce déroule sur sur le canvas et bind une commande sur un evenement 
@@ -121,7 +125,7 @@ class JeuVue:
         if hasattr(self, 'id'):
             self.canvas.delete(self.id)
             
-        self.id = self.canvas.create_image(objet.getOrigine().x,objet.getOrigine().y,image=objet.getImg) #voir les paramètre
+        self.id = self.canvas.create_image(objet.getOrigine().x,objet.getOrigine().y,image=objet.imageTk) #voir les paramètre
         
         self.canvas.update()
  
