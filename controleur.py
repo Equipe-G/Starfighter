@@ -75,7 +75,7 @@ class JeuControleur:
         return self.partieEnCours
 
     def __defineEvent(self):
-        self.vue.setListen("<ButtonPress-1>", self.buttonPressed())
+        self.vue.setListen("<ButtonPress-1>", self.buttonPressed)
         self.vue.setListen("<ButtonRelease-1>", self.buttonReleased())
         self.vue.setListen("<Motion>", self.isMoving)
     
