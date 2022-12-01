@@ -75,7 +75,7 @@ class JeuControleur:
         return self.partieEnCours
 
     def __defineEvent(self):
-        self.vue.setListen("<ButtonPress-1>", self.buttonPressed)
+        self.vue.setListen("<ButtonPress-1>", self.buttonPressed())
         self.vue.setListen("<ButtonRelease-1>", self.buttonReleased())
         self.vue.setListen("<Motion>", self.isMoving)
     
@@ -105,7 +105,7 @@ class JeuControleur:
         if not self.verifierCollision():
             self.deplacementOvnis()
             self.afficherPouvoir()
-            self.deplacerVaisseau(self.x, self.y)
+            self.deplacementVaisseau(self.x, self.y)
         else:
             self.terminerPartie()
 
@@ -133,7 +133,7 @@ class JeuControleur:
 
             self.ovnis[ovni].translateTo(deplacement)
             self.ovnis[ovni].modificationPos(deplacement)
-            self.vue.draw(self.ovnis)
+            self.vue.drawObjet(self.ovnis)
 
     def deplacementLogique(self, ovni, x, y):
         #! Deplacement logique des ovnis ici!
