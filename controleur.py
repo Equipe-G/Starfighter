@@ -7,7 +7,7 @@ from random import Random, random
 class MenuControleur:
     def __init__(self, root, jeuControleur):
         self.jeuControleur = jeuControleur
-        self.vue = MenuVue(root, self.nouvelleSession, self.afficherScore, self.quitter)
+        #self.vue = MenuVue(root, self.nouvelleSession, self.afficherScore, self.quitter)
 
     def commencerJeu(self):
         self.vue.draw()
@@ -45,16 +45,21 @@ class MenuControleur:
 class JeuControleur:
     def __init__(self, root):
         self.root = root
+        
         self.vue = JeuVue(root)
-        self.vue.setNom(self.partie.nom)
-        self.vue.setDif(self.partie.difficulte)
-        self.genererJeu()
+        #self.vue.setNom(self.partie.nom)
+        #self.vue.setDif(self.partie.difficulte)
+        #self.genererJeu()
 
     def genererJeu(self):
         self.partieEnCours = False
-        self.canvasJeu = CanvasJeu(self.root)
-        self.vaisseau = Vaisseau(self.canvasJeu, 1, 100)
-        self.projectile = Projectile(self.canvasJeu, self.vaisseau.getOrigine())
+        self.canvasJeu = self.vue.getCanvas()
+        self.background = Background(self.canvasJeu)
+        self.vue.drawEspaceJeu()
+        self.vue.drawFond(self.background.imageTk)
+        self.vaisseau = Vaisseau(self.canvasJeu)
+        self.vue.drawObjet(self.vaisseau)
+        #self.projectile = Projectile(self.canvasJeu, self.vaisseau.getOrigine())
         self.ovnis = []
         self.asteroide = []
         self.isMoving = False
@@ -91,7 +96,7 @@ class JeuControleur:
         self.x = event.x
         self.y = event.y
         if not self.partieEnCours:
-            # self.partie = Partie()
+            #self.partie = Partie()
             self.debuter()
 
     def debuter(self):
@@ -162,7 +167,7 @@ class JeuControleur:
         deplacement = Vecteur(x, y)
         self.vaisseau.translateTo(deplacement)
         self.vaisseau.modificationPos(deplacement)
-        self.vue.draw(self.vaisseau)
+        self.vue.drawObject(self.vaisseau)
         
     def initAsteroide(self):
         for a in self.asteroide:
