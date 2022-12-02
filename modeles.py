@@ -1,7 +1,5 @@
 from c31Geometry2 import *
-#from PIL import ImageTk, Image
-from PIL import ImageTk
-from PIL import Image
+from PIL import ImageTk, Image
 
 class objetVolant(Oval): 
     def __init__(self, canvas, vitesse, vie, petitRayon, grandRayon, origine, lienImage):
