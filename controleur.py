@@ -1,8 +1,9 @@
 from vue import JeuVue, MenuVue
-from modeles import Vaisseau, Projectile, Background
+from modeles import Vaisseau, Projectile, Ovni, PowerUp, asteroides
 from c31Geometry2 import *
 import csv
 from time import sleep
+from random import Random, random
 class MenuControleur:
     def __init__(self, root, jeuControleur):
         self.jeuControleur = jeuControleur
@@ -60,15 +61,18 @@ class JeuControleur:
         self.vue.drawObjet(self.vaisseau)
         #self.projectile = Projectile(self.canvasJeu, self.vaisseau.getOrigine())
         self.ovnis = []
+        self.asteroide = []
         self.isMoving = False
         self.pressed = False
         self.released = False
         #! Generer les ovnis ici!
-        #for i in range(0, 20):
-            #self.ovnis.append(Ovni(self.canvasJeu))
-        #self.vue.drawObjet(self.vaisseau)
-        #self.vue.drawObjet(self.projectile)
-        #self.vue.drawObjet(self.ovnis)
+        for i in range(0, 20):
+            self.ovnis.append(Ovni(self.canvasJeu))
+        for i in range(0,20):
+            self.asteroide.append(asteroides(self.canvasJeu))
+        self.vue.draw(self.vaisseau)
+        self.vue.draw(self.projectile)
+        self.vue.draw(self.ovnis)
         self.__defineEvent()
 
     def demarrerPartie(self):
@@ -140,31 +144,71 @@ class JeuControleur:
         return True
 
     def deplacementLogiqueVaisseau(self, x, y):
-        if x > self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au nord-est
-            self.deplacementVaisseau(self.vaisseau.get_origine().x +1, self.vaisseau.get_origine().y +1)
-        elif x == self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au nord
-            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y +1)
-        elif x < self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au nord-ouest
-            self.deplacementVaisseau(self.vaisseau.get_origine().x -1, self.vaisseau.get_origine().y +1)
-        elif x < self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est à l'ouest
-            self.deplacementVaisseau(self.vaisseau.get_origine().x -1, self.vaisseau.get_origine().y)
-        elif x < self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au sud-ouest
-            self.deplacementVaisseau(self.vaisseau.get_origine().x -1, self.vaisseau.get_origine().y -1)
-        elif x == self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au sud
-            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y -1)
-        elif x > self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au sud-est
-            self.deplacementVaisseau(self.vaisseau.get_origine().x +1, self.vaisseau.get_origine().y -1)
-        elif x > self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est à l'est
-            self.deplacementVaisseau(self.vaisseau.get_origine().x +1, self.vaisseau.get_origine().y)
-        elif x == self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est sur l'origine du vaisseau
-            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y)
+        if x > self.vaisseau.getOrigine().x and y > self.vaisseau.getOrigine().y : #curseur est au nord-est
+            self.deplacementVaisseau(self.vaisseau.getOrigine().x +1, self.vaisseau.getOrigine().y +1)
+        elif x == self.vaisseau.getOrigine().x and y > self.vaisseau.getOrigine().y : #curseur est au nord
+            self.deplacementVaisseau(self.vaisseau.getOrigine().x, self.vaisseau.getOrigine().y +1)
+        elif x < self.vaisseau.getOrigine().x and y > self.vaisseau.getOrigine().y : #curseur est au nord-ouest
+            self.deplacementVaisseau(self.vaisseau.getOrigine().x -1, self.vaisseau.getOrigine().y +1)
+        elif x < self.vaisseau.getOrigine().x and y == self.vaisseau.getOrigine().y : #curseur est à l'ouest
+            self.deplacementVaisseau(self.vaisseau.getOrigine().x -1, self.vaisseau.getOrigine().y)
+        elif x < self.vaisseau.getOrigine().x and y < self.vaisseau.getOrigine().y : #curseur est au sud-ouest
+            self.deplacementVaisseau(self.vaisseau.getOrigine().x -1, self.vaisseau.getOrigine().y -1)
+        elif x == self.vaisseau.getOrigine().x and y < self.vaisseau.getOrigine().y : #curseur est au sud
+            self.deplacementVaisseau(self.vaisseau.getOrigine().x, self.vaisseau.getOrigine().y -1)
+        elif x > self.vaisseau.getOrigine().x and y < self.vaisseau.getOrigine().y : #curseur est au sud-est
+            self.deplacementVaisseau(self.vaisseau.getOrigine().x +1, self.vaisseau.getOrigine().y -1)
+        elif x > self.vaisseau.getOrigine().x and y == self.vaisseau.getOrigine().y : #curseur est à l'est
+            self.deplacementVaisseau(self.vaisseau.getOrigine().x +1, self.vaisseau.getOrigine().y)
+        elif x == self.vaisseau.getOrigine().x and y == self.vaisseau.getOrigine().y : #curseur est sur l'origine du vaisseau
+            self.deplacementVaisseau(self.vaisseau.getOrigine().x, self.vaisseau.getOrigine().y)
             
-
     def deplacementVaisseau(self,x,y):
         deplacement = Vecteur(x, y)
         self.vaisseau.translateTo(deplacement)
         self.vaisseau.modificationPos(deplacement)
-        self.vue.drawObjet(self.vaisseau)
+        self.vue.drawObject(self.vaisseau)
+        
+    def initAsteroide(self):
+        for a in self.asteroide:
+            rndX = random.randint(50,450)
+            position = Vecteur(rndX, -20)
+            a.modificationPos(position)
+    
+    def deplacementAsteroide(self):
+        for a in self.asteroide :
+            newPos = Vecteur(a.getOrigine().x, a.getOrigine().y + 1)
+            a.modificationPos(newPos)
+            
+    def initOvni(self):
+        for o in self.ovnis:
+            rndX = random.randint(50,450)
+            maxRndY = random.randint(15, 95)
+            position = Vecteur(rndX, -20)
+            o.modificationPos(position)
+            
+    def deplacementOvni(self):
+        for o in self.ovnis:
+            if o.getOrigine().y < o.getMaxY() :
+                newPos = Vecteur(o.getOrigine().x, +1)
+                o.modificationPos(newPos)
+            else :
+                rndDirection = random.randint(0,1)
+                rndWobble = random.randint(o.getOrigine().y -15, o.getOrigine().y +15)
+                if rndDirection == 0 : #vers la gauche
+                    if rndWobble == o.getOrigine().y : #no wobble
+                        newPos = Vecteur(o.getOrigine().x - 1, o.getOrigine().y)
+                    elif rndWobble < o.getOrigine().y : #wobble vers le haut
+                        newPos = Vecteur(o.getOrigine().x - 1, o.getOrigine().y-1)
+                    elif rndWobble > o.getOrigine().y : #wobble vers le bas
+                        newPos = Vecteur(o.getOrigine().x -1, o.getOrigine().y +1)
+                else : #vers la droite
+                    if rndWobble == o.getOrigine().y : #no wobble
+                        newPos = Vecteur(o.getOrigine().x + 1, o.getOrigine().y)
+                    elif rndWobble < o.getOrigine().y : #wobble vers le haut
+                        newPos = Vecteur(o.getOrigine().x + 1, o.getOrigine().y - 1)
+                    elif rndWobble > o.getOrigine().y : #wobble vers le bas
+                        newPos = Vecteur(o.getOrigine().x + 1, o.getOrigine().y + 1)
 
 
 
