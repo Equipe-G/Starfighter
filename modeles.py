@@ -1,5 +1,4 @@
 from c31Geometry2 import *
-#from PIL import ImageTk, Image
 from PIL import ImageTk
 from PIL import Image
 
@@ -73,15 +72,10 @@ class PowerUp(Cercle):
     def setRayon(self, rayon):
         self.rayon = rayon
 
-class Projectile(Oval):
-    def __init__(self, canvas, origine):
-        self.petitRayon = 5
-        self.grandRayon = 10
-        self.vitesse = 1
-        self.imageBase = Image.open("Image/Lazer.png")
-        self.image = self.imageBase.resize((50,50), Image.ANTIALIAS)
-        self.imageTk = ImageTk.PhotoImage(self.image)
-        super().__init__(canvas, origine, self.petitRayon, self.grandRayon, "white", "white, 0")
+class Projectile(objetVolant):
+    def __init__(self, canvas):
+        self.lienImage = "Image/Lazer.png"
+        super().__init__(canvas, 10, 0, 0, 1, Vecteur(5,15), self.lienImage)
 
     def getOrigine(self) -> Vecteur:
         """Permet de récupérer l'origine du projectile
@@ -113,13 +107,13 @@ class Projectile(Oval):
 class Vaisseau(objetVolant):
     def __init__(self, canvas):
         self.lienImage = "Image/Vaisseau.png"
-        super().__init__(canvas, 10, 100, 50, 100 , Vecteur(500,900), self.lienImage)
+        super().__init__(canvas, 10, 100, 50, 100, Vecteur(500,900), self.lienImage)
 
 class Ovni(objetVolant):
     def __init__(self, canvas, origine, maxY):
         self.maxY = maxY
         self.lienImage = "Image/Alien.png"
-        super().__init__(canvas, 5, 10, 20, 50 , origine, self.lienImage)
+        super().__init__(canvas, 5, 10, 20, 50, origine, self.lienImage)
         
     def getMaxY(self):
         return self.maxY
@@ -134,7 +128,6 @@ class Background:
         self.imageBase = Image.open("Image/background.gif")
         self.image = self.imageBase.resize((1000,1000), Image.ANTIALIAS)
         self.imageTk = ImageTk.PhotoImage(self.image)
-        #super().__init__(canvas, Vecteur(0,0), 1000, 1000, "white", "white", 0)
         
 #class boss(Ovni)
 

@@ -44,14 +44,11 @@ class MenuControleur:
 class JeuControleur:
     def __init__(self, root):
         self.root = root
-        
         self.vue = JeuVue(root)
         #self.vue.setNom(self.partie.nom)
         #self.vue.setDif(self.partie.difficulte)
         self.isMovingg = False
         self.released = False
-        #self.genererJeu()
-        print("jeu controleur")
 
     def genererJeu(self):
         self.partieEnCours = False
@@ -61,7 +58,7 @@ class JeuControleur:
         self.vue.drawFond(self.background.imageTk)
         self.vaisseau = Vaisseau(self.canvasJeu)
         self.vue.drawObjet(self.vaisseau)
-        #self.projectile = Projectile(self.canvasJeu, self.vaisseau.getOrigine())
+        self.projectile = Projectile(self.canvasJeu)
         self.ovnis = []
         #! Generer les ovnis ici!
         #for i in range(0, 20):
@@ -81,7 +78,7 @@ class JeuControleur:
     def buttonReleased(self, event):
         self.pressed = False
         self.released = True
-        print("released")
+        self.tirerProjectile(event.x, event.y)
 
     def isMoving(self, event):
         self.isMovingg = True
@@ -136,7 +133,7 @@ class JeuControleur:
         return True
 
     def deplacementLogiqueVaisseau(self, x, y):
-        speed = 2
+        speed = 3
         if x > self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au nord-est
             self.deplacementVaisseau(self.vaisseau.get_origine().x +speed, self.vaisseau.get_origine().y -speed)
         elif x == self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au nord
@@ -162,37 +159,10 @@ class JeuControleur:
         self.vaisseau.modificationPos(deplacement)
         self.vue.drawObjet(self.vaisseau)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    def tirerProjectile(self, x, y):
+        for i in range(y):
+            deplacement = Vecteur(x, y)
+            self.projectile.translateTo(deplacement)
+            self.projectile.modificationPos(deplacement)
+            self.vue.drawObjet(self.projectile)
+            y -= 1
