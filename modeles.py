@@ -123,7 +123,7 @@ class asteroides(objetVolant):
         self.lienImage = "Image/asteroide.png" 
         super().__init__(canvas, 3, 1, 20, 20, origine, self.lienImage)
 
-class Background:
+class Background():
     def __init__(self, canvas):
         self.imageBase = Image.open("Image/background.gif")
         self.image = self.imageBase.resize((1000,1000), Image.ANTIALIAS)
