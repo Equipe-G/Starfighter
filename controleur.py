@@ -58,7 +58,7 @@ class JeuControleur:
         self.vue.drawFond(self.background.imageTk)
         self.vaisseau = Vaisseau(self.canvasJeu)
         self.vue.drawObjet(self.vaisseau)
-        self.projectile = Projectile(self.canvasJeu)
+        self.projectile = Projectile(self.canvasJeu, self.vaisseau.getOrigine())
         self.ovnis = []
         #! Generer les ovnis ici!
         #for i in range(0, 20):
