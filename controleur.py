@@ -166,3 +166,4 @@ class JeuControleur:
             self.projectile.modificationPos(deplacement)
             self.vue.drawObjet(self.projectile)
             y -= 1
+            
