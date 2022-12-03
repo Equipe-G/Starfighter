@@ -75,6 +75,8 @@ class PowerUp(Cercle):
 class Projectile(objetVolant):
     def __init__(self, canvas):
         self.lienImage = "Image/Lazer.png"
+        self.image = self.imageBase.resize((50,50), Image.ANTIALIAS)
+        self.imageTk = ImageTk.PhotoImage(self.image)
         super().__init__(canvas, 10, 0, 0, 1, Vecteur(5,15), self.lienImage)
 
     def getOrigine(self) -> Vecteur:
