@@ -73,9 +73,9 @@ class PowerUp(Cercle):
         self.rayon = rayon
 
 class Projectile(objetVolant):
-    def __init__(self, canvas):
+    def __init__(self, canvas, origine):
         self.lienImage = "Image/Lazer.png"
-        super().__init__(canvas, 10, 1, 1, 2, Vecteur(5,15), self.lienImage)
+        super().__init__(canvas, 10, 1, 1, 2, origine, self.lienImage)
 
     def getOrigine(self) -> Vecteur:
         """Permet de récupérer l'origine du projectile
