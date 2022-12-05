@@ -47,13 +47,13 @@ class JeuControleur:
         self.vue = JeuVue(root)
         #self.vue.setNom(self.partie.nom)
         #self.vue.setDif(self.partie.difficulte)
-        self.isMovingg = False
+        self.moving = False
         self.released = False
 
     def genererJeu(self):
         self.partieEnCours = False
         self.canvasJeu = self.vue.getCanvas()
-        self.background = Background(self.canvasJeu)
+        self.background = Background()
         self.vue.drawEspaceJeu()
         self.vue.drawFond(self.background.imageTk)
         self.vaisseau = Vaisseau(self.canvasJeu)
@@ -70,10 +70,10 @@ class JeuControleur:
 
     def demarrerPartie(self):
         return self.partieEnCours
+
     def __defineEvent(self):
         self.vue.setListen("<ButtonRelease-1>", self.buttonReleased)
         self.vue.setListen("<Motion>", self.isMoving)
-        print("event defined")
 
     def buttonReleased(self, event):
         self.pressed = False
@@ -81,7 +81,7 @@ class JeuControleur:
         self.tirerProjectile(event.x, event.y)
 
     def isMoving(self, event):
-        self.isMovingg = True
+        self.moving = True
         self.x = event.x
         self.y = event.y
         if not self.partieEnCours:
@@ -126,7 +126,7 @@ class JeuControleur:
 
             self.ovnis[ovni].translateTo(deplacement)
             self.ovnis[ovni].modificationPos(deplacement)
-            self.vue.drawObjet(self.ovnis)
+            self.vue.draw(self.ovnis)
 
     def deplacementLogique(self, ovni, x, y):
         #! Deplacement logique des ovnis ici!
@@ -152,6 +152,7 @@ class JeuControleur:
             self.deplacementVaisseau(self.vaisseau.get_origine().x +speed, self.vaisseau.get_origine().y)
         elif x == self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est sur l'origine du vaisseau
             self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y)
+            
 
     def deplacementVaisseau(self,x,y):
         deplacement = Vecteur(x, y)
@@ -166,4 +167,3 @@ class JeuControleur:
             self.projectile.modificationPos(deplacement)
             self.vue.drawObjet(self.projectile)
             y -= 1
-            
