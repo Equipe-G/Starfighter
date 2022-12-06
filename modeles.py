@@ -14,7 +14,7 @@ class objetVolant(Oval):
         vitesse(int): vitesse de mouvement de l'objet
         imageTk(): image representant l'objet
     """ 
-    def __init__(self, canvas, vitesse, vie, petitRayon, grandRayon, origine, lienImage):
+    def __init__(self, canvas, vitesse, vie, petitRayon, grandRayon, origine, lienImage, xImage, yImage):
         """Permet de definir un objet volant 
 
         Initialise origine, petitRayon, grandRayon, vie, vitesse et imageTk
@@ -32,7 +32,7 @@ class objetVolant(Oval):
         self.petitRayon = petitRayon
         self.grandRayon = grandRayon
         self.imageBase = Image.open(lienImage)
-        self.image = self.imageBase.resize((200,200), Image.ANTIALIAS)
+        self.image = self.imageBase.resize((xImage,yImage), Image.ANTIALIAS)
         self.imageTk = ImageTk.PhotoImage(self.image)
         super().__init__(canvas, origine, self.petitRayon, self.grandRayon, "white", "white", 0)
 
@@ -224,7 +224,7 @@ class Vaisseau(objetVolant):
                 canvas (tk.Canvas): canvas où l'on dessine le carré
         """ 
         self.lienImage = "Image/Vaisseau.png"
-        super().__init__(canvas, 10, 100, 50, 100 , Vecteur(500,900), self.lienImage)
+        super().__init__(canvas, 10, 100, 50, 100 , Vecteur(500,900), self.lienImage, 200, 200)
 
 class Ovni(objetVolant):
     """Cette classe est represente un ovni ennemi (Herite de ObjetVolant)
@@ -242,7 +242,7 @@ class Ovni(objetVolant):
         """ 
         self.maxY = maxY
         self.lienImage = "Image/Alien.png"
-        super().__init__(canvas, 5, 10, 20, 50 , origine, self.lienImage)
+        super().__init__(canvas, 5, 10, 20, 50 , origine, self.lienImage, 150, 150)
         
     def getMaxY(self):
         """Permet de récupérer le maxY de l'ovni
@@ -265,7 +265,7 @@ class asteroides(objetVolant):
                 canvas (tk.Canvas): canvas où l'on dessine le carré
         """ 
         self.lienImage = "Image/asteroide.png" 
-        super().__init__(canvas, 3, 1, 20, 20, origine, self.lienImage)
+        super().__init__(canvas, 3, 1, 20, 20, origine, self.lienImage, 150, 150)
 
 class Background():
     """Cette classe est represente l'arriere plan
