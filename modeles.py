@@ -107,7 +107,7 @@ class objetVolant(Oval):
         """
         self.grandRayon = grandRayon
         
-class PowerUp(Cercle):
+class PowerUp(objetVolant):
     """Cette classe est la parente de tout powerup (Herite de Cercle de c31Geometry2)
     
     Attributes:
@@ -116,21 +116,24 @@ class PowerUp(Cercle):
         imageTk(): image representant l'objet
         vitesse(int): vitesse de mouvement du powerup
     """ 
-    def __init__(self, canvas, origine, lienImage):
+    def __init__(self, canvas, origine, power):
         """Permet de definir un objet volant 
 
         Initialise origine, rayon et imageTk
             Args: 
                 canvas (tk.Canvas): canvas où l'on dessine le carré
                 origine(Vecteur): position de l'objet
-                lienImage(string): chemin relatif de l'image de l'objet
-        """ 
-        self.vitesse = 3
-        self.rayon = 10
-        self.imageBase = Image.open(lienImage)
-        self.image = self.imageBase.resize((50,50), Image.ANTIALIAS)
-        self.imageTk = ImageTk.PhotoImage(self.image)
-        super().__init__(canvas, origine, self.rayon, "white", "white", 0)
+        """
+        self.lienImage = ""
+
+        if power == 1:
+            self.lienImage = "Image/powerUp1.png"
+        elif power == 2:
+            self.lienImage = "Image/powerUp2.png"
+        elif power == 3:
+            self.lienImage = "Image/powerUp3.png"
+
+        super().__init__(canvas, 0, 0, 10, 15, origine, self.lienImage)
     
     def getOrigine(self) -> Vecteur:
         """Permet de récupérer l'origine du powerup
@@ -168,20 +171,15 @@ class PowerUp(Cercle):
         """
         return self.rayon
 
-class Projectile(Oval):
+class Projectile(objetVolant):
     """Cette classe est represente un projectile tire par un vaisseau ou ovni (Herite de ObjetVolant)
     
     Attributes:
         Ceux de la superclasse ObjetVolant
     """ 
     def __init__(self, canvas, origine):
-        self.petitRayon = 5
-        self.grandRayon = 10
-        self.vitesse = 1
-        self.imageBase = Image.open("Image/Lazer.png")
-        self.image = self.imageBase.resize((50,50), Image.ANTIALIAS)
-        self.imageTk = ImageTk.PhotoImage(self.image)
-        super().__init__(canvas, origine, self.petitRayon, self.grandRayon, "white", "white, 0")
+        self.lienImage = "Image/Lazer.png"
+        super().__init__(canvas, 10, 1, 1, 2, origine, self.lienImage)
 
     def getOrigine(self) -> Vecteur:
         """Permet de récupérer l'origine du projectile
