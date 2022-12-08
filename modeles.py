@@ -1,3 +1,4 @@
+import time
 from c31Geometry2 import *
 from PIL import ImageTk, Image
 
@@ -265,7 +266,7 @@ class asteroides(objetVolant):
         self.lienImage = "Image/asteroide.png" 
         super().__init__(canvas, 3, 1, 20, 20, origine, self.lienImage)
 
-class Background():
+class Background:
     """Cette classe est represente l'arriere plan
     
     Attributes:
@@ -276,5 +277,43 @@ class Background():
         self.image = self.imageBase.resize((1000,1000), Image.ANTIALIAS)
         self.imageTk = ImageTk.PhotoImage(self.image)
         
-#class boss(Ovni)
-
+class Partie:
+    """Cette classe représente une partie dans le jeu
+        Attributes:
+            tempsDebut(double): temps quand le minuteur commence
+            nomJoueur(string): nom du joueur
+            score(int): score de la partie
+    """
+    def __init__(self, nom):
+        """Permet de definir la partie
+            Initialise tempsDebut
+        """
+        self.score = 0
+        self.nomJoueur = nom
+        self.tempsDebut = time.time()  
+        
+    def addScore(self):
+        """Permet d'augenter le score de cette partie
+        """
+        self.score += 5
+        
+    def getNom(self):
+        """Permet de récupérer nom du joueur cette partie
+        Returns:
+            string: nom du joueur
+        """
+        return self.nomJoueur
+    
+    def getNom(self):
+        """Permet de récupérer score cette partie
+        Returns:
+            string: score
+        """
+        return self.score
+    
+    def getTemps(self):
+        """Permet de récupérer le temps depuis le debut de la partie
+        Returns:
+            double: temps passé depuis début de la partie
+        """
+        return round((time.time() - self.tempsDebut), 2)
