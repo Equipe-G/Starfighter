@@ -1,5 +1,5 @@
 from vue import JeuVue, MenuVue
-from modeles import Vaisseau, Projectile, Background, PowerUp
+from modeles import Partie, Vaisseau, Projectile, Background, PowerUp
 from c31Geometry2 import *
 import csv
 from time import sleep
@@ -63,6 +63,7 @@ class JeuControleur:
         self.projectile = Projectile(self.canvasJeu, self.vaisseau.getOrigine())
         self.powerUp = 0
         self.ovnis = []
+        self.partie = Partie("Isidore")
         #! Generer les ovnis ici!
         #for i in range(0, 20):
             #self.ovnis.append(Ovni(self.canvasJeu))
@@ -186,3 +187,9 @@ class JeuControleur:
             self.powerUp.modificationPos(affichage)
             self.vue.drawObjet(self.powerUp)
             self.i = 0
+    
+    def sauverScore(self):
+        with open('FichierScores.csv', 'a') as csvFile :
+            ecriture_score = csv.writer(csvFile, delimiter=',')
+            texte = [self.partie.getNom(), str(self.partie.getTemps()), self.partie.getScore()]
+            ecriture_score.writerow(texte)       
