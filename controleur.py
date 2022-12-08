@@ -1,8 +1,9 @@
 from vue import JeuVue, MenuVue
-from modeles import Vaisseau, Projectile, Background
+from modeles import Vaisseau, Projectile, Background, PowerUp
 from c31Geometry2 import *
 import csv
 from time import sleep
+import random
 class MenuControleur:
     def __init__(self, root, jeuControleur):
         self.jeuControleur = jeuControleur
@@ -44,25 +45,24 @@ class MenuControleur:
 class JeuControleur:
     def __init__(self, root):
         self.root = root
-        
         self.vue = JeuVue(root)
         #self.vue.setNom(self.partie.nom)
         #self.vue.setDif(self.partie.difficulte)
-        #self.genererJeu()
+        self.moving = False
+        self.released = False
+        self.i = 0
 
     def genererJeu(self):
         self.partieEnCours = False
         self.canvasJeu = self.vue.getCanvas()
-        self.background = Background(self.canvasJeu)
+        self.background = Background()
         self.vue.drawEspaceJeu()
         self.vue.drawFond(self.background.imageTk)
         self.vaisseau = Vaisseau(self.canvasJeu)
         self.vue.drawObjet(self.vaisseau)
-        #self.projectile = Projectile(self.canvasJeu, self.vaisseau.getOrigine())
+        self.projectile = Projectile(self.canvasJeu, self.vaisseau.getOrigine())
+        self.powerUp = 0
         self.ovnis = []
-        self.isMoving = False
-        self.pressed = False
-        self.released = False
         #! Generer les ovnis ici!
         #for i in range(0, 20):
             #self.ovnis.append(Ovni(self.canvasJeu))
@@ -75,20 +75,16 @@ class JeuControleur:
         return self.partieEnCours
 
     def __defineEvent(self):
-        self.vue.setListen("<ButtonPress-1>", self.buttonPressed)
-        self.vue.setListen("<ButtonRelease-1>", self.buttonReleased())
+        self.vue.setListen("<ButtonRelease-1>", self.buttonReleased)
         self.vue.setListen("<Motion>", self.isMoving)
     
-    def buttonPressed(self):
-        self.pressed = True
-        self.released = False
-
-    def buttonReleased(self):
+    def buttonReleased(self, event):
         self.pressed = False
         self.released = True
+        self.tirerProjectile(event.x, event.y)
 
     def isMoving(self, event):
-        self.isMoving = True
+        self.moving = True
         self.x = event.x
         self.y = event.y
         if not self.partieEnCours:
@@ -98,14 +94,14 @@ class JeuControleur:
     def debuter(self):
         self.partieEnCours = True
         if self.partieEnCours:
-            self.e = LoopEvent(self.vue.root, self.roulerJeu, 10)
+            self.e = LoopEvent(self.vue.root, self.roulerJeu, 15)
             self.e.start()
 
     def roulerJeu(self):
         if not self.verifierCollision():
-            self.deplacementOvnis()
-            self.afficherPouvoir()
-            self.deplacerVaisseau(self.x, self.y)
+            #self.deplacementOvnis()
+            self.deplacementLogiqueVaisseau(self.x, self.y)
+            self.powerUps()
         else:
             self.terminerPartie()
 
@@ -133,29 +129,30 @@ class JeuControleur:
 
             self.ovnis[ovni].translateTo(deplacement)
             self.ovnis[ovni].modificationPos(deplacement)
-            self.vue.draw(self.ovnis)
+            self.vue.drawObjet(self.ovnis)
 
     def deplacementLogique(self, ovni, x, y):
         #! Deplacement logique des ovnis ici!
         return True
 
     def deplacementLogiqueVaisseau(self, x, y):
-        if x > self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au nord-est
-            self.deplacementVaisseau(self.vaisseau.get_origine().x +1, self.vaisseau.get_origine().y +1)
-        elif x == self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au nord
-            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y +1)
-        elif x < self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au nord-ouest
-            self.deplacementVaisseau(self.vaisseau.get_origine().x -1, self.vaisseau.get_origine().y +1)
+        speed = 4
+        if x > self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au nord-est
+            self.deplacementVaisseau(self.vaisseau.get_origine().x + speed, self.vaisseau.get_origine().y - speed)
+        elif x == self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au nord
+            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y - speed)
+        elif x < self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au nord-ouest
+            self.deplacementVaisseau(self.vaisseau.get_origine().x - speed, self.vaisseau.get_origine().y - speed)
         elif x < self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est à l'ouest
-            self.deplacementVaisseau(self.vaisseau.get_origine().x -1, self.vaisseau.get_origine().y)
-        elif x < self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au sud-ouest
-            self.deplacementVaisseau(self.vaisseau.get_origine().x -1, self.vaisseau.get_origine().y -1)
-        elif x == self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au sud
-            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y -1)
-        elif x > self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au sud-est
-            self.deplacementVaisseau(self.vaisseau.get_origine().x +1, self.vaisseau.get_origine().y -1)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x - speed, self.vaisseau.get_origine().y)
+        elif x < self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au sud-ouest
+            self.deplacementVaisseau(self.vaisseau.get_origine().x - speed, self.vaisseau.get_origine().y + speed)
+        elif x == self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au sud
+            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y + speed)
+        elif x > self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au sud-est
+            self.deplacementVaisseau(self.vaisseau.get_origine().x + speed, self.vaisseau.get_origine().y + speed)
         elif x > self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est à l'est
-            self.deplacementVaisseau(self.vaisseau.get_origine().x +1, self.vaisseau.get_origine().y)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x + speed, self.vaisseau.get_origine().y)
         elif x == self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est sur l'origine du vaisseau
             self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y)
             
@@ -166,37 +163,26 @@ class JeuControleur:
         self.vaisseau.modificationPos(deplacement)
         self.vue.drawObjet(self.vaisseau)
 
+    def tirerProjectile(self, x, y):
+        for i in range(y):
+            deplacement = Vecteur(x, y)
+            self.projectile.translateTo(deplacement)
+            self.projectile.modificationPos(deplacement)
+            self.vue.drawObjet(self.projectile)
+            y -= 1
 
+    def powerUps(self):
+        if self.i <= 100:
+            self.i += 1
+        else:
+            print("powerUps")
+            x = random.randint(200, 500)
+            y = random.randint(200, 500)
+            power = random.randint(1, 3)
+            affichage = Vecteur(x, y)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            self.powerUp = PowerUp(self.canvasJeu, affichage, power)
+            self.powerUp.translateTo(affichage)
+            self.powerUp.modificationPos(affichage)
+            self.vue.drawObjet(self.powerUp)
+            self.i = 0
