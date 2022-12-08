@@ -163,6 +163,8 @@ class JeuControleur:
         self.vaisseau.translateTo(deplacement)
         self.vaisseau.modificationPos(deplacement)
         self.vue.drawObjet(self.vaisseau)
+        #self.canvasJeu.move(self.vaisseau, x, y)
+        #self.canvasJeu.update()
 
     def tirerProjectile(self, x, y):
         for i in range(y):
@@ -192,4 +194,4 @@ class JeuControleur:
         with open('FichierScores.csv', 'a') as csvFile :
             ecriture_score = csv.writer(csvFile, delimiter=',')
             texte = [self.partie.getNom(), str(self.partie.getTemps()), self.partie.getScore()]
-            ecriture_score.writerow(texte)       
+            ecriture_score.writerow(texte)

@@ -51,7 +51,7 @@ class JeuVue:
         self.nom = "" # a aller chercher au debut de la partie et save
         self.score = "" # a changer tout au long de la partie et a save a la fin 
         self.vie = "" # a changer tout au long de la partie
-        self.canvas = tk.Canvas(root, width=1000, height=1000, bg='white') 
+        self.canvas = tk.Canvas(root, width=1000, height=1000, bg='white')
         #self.nom.grid()
         #self.vie.grid()
         #self.score.grid()
@@ -117,15 +117,20 @@ class JeuVue:
         Returns:
             String: le nom choisi        
         """
-        return simpledialog.askstring("Input","Quel est votre nom",parent=root)
+        return simpledialog.askstring("Input", "Quel est votre nom", parent=root)
 
-    def drawObjet(self,objet) :
-        """Permet de dessiner tout les objet ayant un sprite valide(une image) 
+    def drawObjet(self, objet):
+        """Permet de dessiner tous les objet ayant un sprite valide(une image)
         """
         if hasattr(self, 'id'):
             self.canvas.delete(self.id)
-            
-        self.id = self.canvas.create_image(objet.getOrigine().x,objet.getOrigine().y,image=objet.imageTk) #voir les paramètre
+
+        self.id = self.canvas.create_image(objet.getOrigine().x, objet.getOrigine().y, image=objet.imageTk) #voir les paramètre
         
         self.canvas.update()
- 
+
+    def updateObjet(self, objet):
+        """Permet de mettre a jour la position d'un objet
+        """
+        self.canvas.move(self.id, objet.getOrigine().x, objet.getOrigine().y)
+        self.canvas.update()

@@ -134,7 +134,7 @@ class PowerUp(objetVolant):
         elif power == 3:
             self.lienImage = "Image/powerUp3.png"
 
-        super().__init__(canvas, 0, 0, 10, 15, origine, self.lienImage)
+        super().__init__(canvas, 0, 0, 10, 15, origine, self.lienImage, 30, 45)
     
     def getOrigine(self) -> Vecteur:
         """Permet de récupérer l'origine du powerup
@@ -180,7 +180,7 @@ class Projectile(objetVolant):
     """ 
     def __init__(self, canvas, origine):
         self.lienImage = "Image/Lazer.png"
-        super().__init__(canvas, 10, 1, 1, 2, origine, self.lienImage)
+        super().__init__(canvas, 10, 1, 1, 2, origine, self.lienImage, 40, 40)
 
     def getOrigine(self) -> Vecteur:
         """Permet de récupérer l'origine du projectile
