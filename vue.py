@@ -19,8 +19,7 @@ class MenuVue:
         :type closeApp : method() 
         """
         self.root = root
-        self.frame = tk.Frame(root, width=200, height=200)
-        self.score = tk.Label(root, text="")         
+        self.frame = tk.Frame(root, width=300, height=0)        
         self.btn_nouvellePartie = tk.Button(root, text='Nouvelle Partie',
                                             command=fctLancerPartie)
         self.btn_quitApp = tk.Button(root, text='Quitter',
@@ -32,9 +31,9 @@ class MenuVue:
         """ dessine le menu graphique et tout les boutons
         """
         self.frame.pack()
-        self.btn_nouvellePartie.pack(side=tk.TOP)
-        self.btn_voirScore.pack(side=tk.TOP)
-        self.btn_quitApp.pack(side=tk.TOP) 
+        self.btn_nouvellePartie.pack(fill='x',side = "top")
+        self.btn_voirScore.pack(fill='x',side = "top")
+        self.btn_quitApp.pack(fill='x',side = "top") 
 
     def destroy(self):
         self.btn_nouvellePartie.destroy()
