@@ -19,6 +19,7 @@ class MenuVue:
         :type closeApp : method() 
         """
         self.root = root
+        self.frame = tk.Frame(root, width=200, height=200)
         self.score = tk.Label(root, text="")         
         self.btn_nouvellePartie = tk.Button(root, text='Nouvelle Partie',
                                             command=fctLancerPartie)
@@ -30,12 +31,16 @@ class MenuVue:
     def draw(self):
         """ dessine le menu graphique et tout les boutons
         """
-        self.btn_nouvellePartie.pack()
-        self.btn_voirScore.pack()
-        self.btn_quitApp.pack() 
+        self.frame.pack()
+        self.btn_nouvellePartie.pack(side=tk.TOP)
+        self.btn_voirScore.pack(side=tk.TOP)
+        self.btn_quitApp.pack(side=tk.TOP) 
 
     def destroy(self):
-        self.canvas.destroy()
+        self.btn_nouvellePartie.destroy()
+        self.btn_quitApp.destroy()
+        self.btn_voirScore.destroy()
+        self.frame.destroy()
 
 class JeuVue:
     """ cette classe permet de définir l'aparence de l'espace de jeu

@@ -7,10 +7,11 @@ import random
 class MenuControleur:
     def __init__(self, root, jeuControleur):
         self.jeuControleur = jeuControleur
-        #self.vue = MenuVue(root, self.nouvelleSession, self.afficherScore, self.quitter)
-
-    def commencerJeu(self):
+        self.vue = MenuVue(root, self.commencerJeu, self.afficherScore, self.quitter)
         self.vue.draw()
+    def commencerJeu(self):
+        self.vue.destroy()
+        self.jeuControleur.genererJeu()
 
     def quitter(self):
         self.jeuControleur.vue.destroy(self.jeuControleur.vue.root)
