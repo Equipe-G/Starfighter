@@ -3,8 +3,6 @@ from tkinter import simpledialog
 from c31Geometry2 import *
 from tkinter import*
 
-
-
 class MenuVue:
     """ cette classe permet de définir l'aparence du menu
     """
@@ -129,8 +127,9 @@ class JeuVue:
         
         self.canvas.update()
 
+
+    """
     def updateObjet(self, objet):
-        """Permet de mettre a jour la position d'un objet
-        """
         self.canvas.move(self.id, objet.getOrigine().x, objet.getOrigine().y)
         self.canvas.update()
+    """

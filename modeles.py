@@ -250,7 +250,7 @@ class Ovni(objetVolant):
         """
         return self.maxY
 
-class asteroides(objetVolant):
+class Asteroides(objetVolant):
     """Cette classe est represente les asteroides (Herite de ObjetVolant)
     
     Attributes:

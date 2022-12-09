@@ -1,5 +1,5 @@
 from vue import JeuVue, MenuVue
-from modeles import Partie, Vaisseau, Projectile, Background, PowerUp
+from modeles import Partie, Vaisseau, Projectile, Background, PowerUp, Asteroides
 from c31Geometry2 import *
 import csv
 from time import sleep
@@ -51,6 +51,7 @@ class JeuControleur:
         self.moving = False
         self.released = False
         self.i = 0
+        self.j = 0
 
     def genererJeu(self):
         self.partieEnCours = False
@@ -62,6 +63,7 @@ class JeuControleur:
         self.vue.drawObjet(self.vaisseau)
         self.projectile = Projectile(self.canvasJeu, self.vaisseau.getOrigine())
         self.powerUp = 0
+        self.ast = 0
         self.ovnis = []
         self.partie = Partie("Isidore")
         #! Generer les ovnis ici!
@@ -103,6 +105,7 @@ class JeuControleur:
             #self.deplacementOvnis()
             self.deplacementLogiqueVaisseau(self.x, self.y)
             self.powerUps()
+            self.asteroide()
         else:
             self.terminerPartie()
 
@@ -179,8 +182,8 @@ class JeuControleur:
             self.i += 1
         else:
             print("powerUps")
-            x = random.randint(200, 500)
-            y = random.randint(200, 500)
+            x = random.randint(200, 700)
+            y = random.randint(100, 800)
             power = random.randint(1, 3)
             affichage = Vecteur(x, y)
 
@@ -189,6 +192,27 @@ class JeuControleur:
             self.powerUp.modificationPos(affichage)
             self.vue.drawObjet(self.powerUp)
             self.i = 0
+
+    def asteroide(self):
+        if self.j <= 175:
+            self.j += 1
+        else:
+            print("asteroides")
+            x = random.randint(200, 800)
+            y = 0
+            affichage = Vecteur(x, y)
+            self.ast = Asteroides(self.canvasJeu, affichage)
+            self.ast.translateTo(affichage)
+            self.ast.modificationPos(affichage)
+            self.vue.drawObjet(self.ast)
+            for i in range(10000):
+                deplacement = Vecteur(x, y)
+                self.ast.translateTo(deplacement)
+                self.ast.modificationPos(deplacement)
+                self.vue.drawObjet(self.ast)
+                y += 0.1
+            self.j = 0
+
     
     def sauverScore(self):
         with open('FichierScores.csv', 'a') as csvFile :
