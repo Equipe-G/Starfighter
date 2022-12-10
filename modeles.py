@@ -241,7 +241,7 @@ class Ovni(objetVolant):
         """ 
         self.maxY = maxY
         self.lienImage = "Image/Alien.png"
-        super().__init__(canvas, 5, 10, 20, 50 , origine, self.lienImage, 150, 150)
+        super().__init__(canvas, 5, 10, 20, 50, origine, self.lienImage, 150, 150)
         
     def getMaxY(self):
         """Permet de récupérer le maxY de l'ovni

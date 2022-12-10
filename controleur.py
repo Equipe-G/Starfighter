@@ -4,11 +4,13 @@ from c31Geometry2 import *
 import csv
 from time import sleep
 import random
+
 class MenuControleur:
     def __init__(self, root, jeuControleur):
         self.jeuControleur = jeuControleur
         self.vue = MenuVue(root, self.commencerJeu, self.afficherScore, self.quitter)
         self.vue.draw()
+
     def commencerJeu(self):
         self.vue.destroy()
         self.jeuControleur.genererJeu()
@@ -47,8 +49,6 @@ class JeuControleur:
     def __init__(self, root):
         self.root = root
         self.vue = JeuVue(root)
-        #self.vue.setNom(self.partie.nom)
-        #self.vue.setDif(self.partie.difficulte)
         self.moving = False
         self.released = False
         self.i = 0
@@ -69,12 +69,9 @@ class JeuControleur:
         self.asteroide = []
         self.partie = Partie("Isidore")
         for i in range(0, 20):
-            self.ovnis.append(Ovni(self.canvasJeu,Vecteur(random.randint(50,450),-20),random.randint(15, 95)))
-        for i in range(0,20):
-            self.asteroide.append(Asteroides(self.canvasJeu,Vecteur(random.randint(50,450),-20)))
-        # self.vue.drawObjet(self.vaisseau)
-        # self.vue.drawObjet(self.projectile)
-        # self.vue.drawObjet(self.ovnis)
+            self.ovnis.append(Ovni(self.canvasJeu, Vecteur(random.randint(50, 450), - 20), random.randint(15, 95)))
+        for i in range(0, 20):
+            self.asteroide.append(Asteroides(self.canvasJeu, Vecteur(random.randint(50, 450), - 20)))
         self.__defineEvent()
 
     def demarrerPartie(self):
@@ -83,7 +80,7 @@ class JeuControleur:
     def __defineEvent(self):
         self.vue.setListen("<ButtonRelease-1>", self.buttonReleased)
         self.vue.setListen("<Motion>", self.isMoving)
-    
+
     def buttonReleased(self, event):
         self.pressed = False
         self.released = True
@@ -105,7 +102,6 @@ class JeuControleur:
 
     def roulerJeu(self):
         if not self.verifierCollision():
-            #self.deplacementOvnis()
             self.deplacementLogiqueVaisseau(self.x, self.y)
             self.powerUps()
             self.deplacementAsteroide()
@@ -114,7 +110,7 @@ class JeuControleur:
             self.terminerPartie()
 
     def terminerPartie(self):
-        self.vue.destroy(self.vue.root)   #!!! A voir dependament de la place du canvas    #self.vue.destroy(self.canvasJeu.canvas)\
+        self.vue.destroy(self.vue.root)
         self.e.stop()
         self.genererJeu()
         sleep(1)
@@ -122,22 +118,6 @@ class JeuControleur:
     def verifierCollision(self):
         vaisseauX = self.vaisseau.getOrigine().x
         vaisseauY = self.vaisseau.getOrigine().y
-
-        #! Verifier les collisions avec les ovnis ici!
-
-    def afficherPouvoir(self):
-        ##Afficher les pouvoirs aleatoirement sur le canvas
-        return True
-
-    # def deplacementOvnis(self):
-    #     for ovni in self.ovnis:
-    #         x = self.ovnis[ovni].getOrigine().x
-    #         y = self.ovnis[ovni].getOrigine().y
-    #         deplacement = self.deplacementLogique(ovni, x, y)
-
-    #         self.ovnis[ovni].translateTo(deplacement)
-    #         self.ovnis[ovni].modificationPos(deplacement)
-    #         self.vue.drawObjet(self.ovnis)
 
     def deplacementLogique(self, ovni, x, y):
         #! Deplacement logique des ovnis ici!
@@ -163,15 +143,12 @@ class JeuControleur:
             self.deplacementVaisseau(self.vaisseau.get_origine().x + speed, self.vaisseau.get_origine().y)
         elif x == self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est sur l'origine du vaisseau
             self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y)
-            
 
     def deplacementVaisseau(self,x,y):
         deplacement = Vecteur(x, y)
         self.vaisseau.translateTo(deplacement)
         self.vaisseau.modificationPos(deplacement)
         self.vue.drawObjet(self.vaisseau)
-        #self.canvasJeu.move(self.vaisseau, x, y)
-        #self.canvasJeu.update()
 
     def tirerProjectile(self):
         y = self.vaisseau.getOrigine().y
@@ -199,7 +176,7 @@ class JeuControleur:
             self.i = 0
 
     def deplacementAsteroide(self):
-        for a in self.asteroide :
+        for a in self.asteroide:
             newPos = Vecteur(a.getOrigine().x, a.getOrigine().y + 1)
             a.translateTo(newPos)
             a.modificationPos(newPos)
@@ -207,9 +184,9 @@ class JeuControleur:
 
     def deplacementOvni(self):
         for o in self.ovnis:
-            if o.getOrigine().y < o.getMaxY() :
+            if o.getOrigine().y < o.getMaxY():
                 newPos = Vecteur(o.getOrigine().x, +1)
-            else :
+            else:
                 rndDirection = random.randint(0,1)
                 rndWobble = random.randint(o.getOrigine().y -15, o.getOrigine().y +15)
                 if rndDirection == 0 : #vers la gauche
@@ -226,31 +203,11 @@ class JeuControleur:
                         newPos = Vecteur(o.getOrigine().x + 1, o.getOrigine().y - 1)
                     elif rndWobble > o.getOrigine().y : #wobble vers le bas
                         newPos = Vecteur(o.getOrigine().x + 1, o.getOrigine().y + 1)
-            #Affichage 
+            #Affichage
             o.translateTo(newPos)
             o.modificationPos(newPos)
-            self.vue.drawObjet(self.powerUp)
+            self.vue.drawObjet(o)
 
-    # def asteroide(self):
-    #     if self.j <= 175:
-    #         self.j += 1
-    #     else:
-    #         print("asteroides")
-    #         x = random.randint(200, 800)
-    #         y = 0
-    #         affichage = Vecteur(x, y)
-    #         self.ast = Asteroides(self.canvasJeu, affichage)
-    #         self.ast.translateTo(affichage)
-    #         self.ast.modificationPos(affichage)
-    #         self.vue.drawObjet(self.ast)
-    #         for i in range(10000):
-    #             deplacement = Vecteur(x, y)
-    #             self.ast.translateTo(deplacement)
-    #             self.ast.modificationPos(deplacement)
-    #             self.vue.drawObjet(self.ast)
-    #             y += 0.1
-    #         self.j = 0
-    
     def sauverScore(self):
         with open('FichierScores.csv', 'a') as csvFile :
             ecriture_score = csv.writer(csvFile, delimiter=',')
