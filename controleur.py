@@ -213,7 +213,6 @@ class JeuControleur:
                 self.vue.drawObjet(self.ast)
                 y += 0.1
             self.j = 0
-
     
     def sauverScore(self):
         with open('FichierScores.csv', 'a') as csvFile :
