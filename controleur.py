@@ -1,5 +1,5 @@
 from vue import JeuVue, MenuVue
-from modeles import Partie, Vaisseau, Projectile, Background, PowerUp, Asteroides
+from modeles import Partie, Vaisseau, Projectile, Background, PowerUp, Asteroides, Ovni
 from c31Geometry2 import *
 import csv
 from time import sleep
@@ -67,12 +67,13 @@ class JeuControleur:
         self.ast = 0
         self.ovnis = []
         self.partie = Partie("Isidore")
-        #! Generer les ovnis ici!
-        #for i in range(0, 20):
-            #self.ovnis.append(Ovni(self.canvasJeu))
-        #self.vue.drawObjet(self.vaisseau)
-        #self.vue.drawObjet(self.projectile)
-        #self.vue.drawObjet(self.ovnis)
+        for i in range(0, 20):
+            self.ovnis.append(Ovni(self.canvasJeu))
+        for i in range(0,20):
+            self.asteroide.append(Asteroides(self.canvasJeu))
+        self.vue.draw(self.vaisseau)
+        self.vue.draw(self.projectile)
+        self.vue.draw(self.ovnis)
         self.__defineEvent()
 
     def demarrerPartie(self):
@@ -194,25 +195,66 @@ class JeuControleur:
             self.vue.drawObjet(self.powerUp)
             self.i = 0
 
-    def asteroide(self):
-        if self.j <= 175:
-            self.j += 1
-        else:
-            print("asteroides")
-            x = random.randint(200, 800)
-            y = 0
-            affichage = Vecteur(x, y)
-            self.ast = Asteroides(self.canvasJeu, affichage)
-            self.ast.translateTo(affichage)
-            self.ast.modificationPos(affichage)
-            self.vue.drawObjet(self.ast)
-            for i in range(10000):
-                deplacement = Vecteur(x, y)
-                self.ast.translateTo(deplacement)
-                self.ast.modificationPos(deplacement)
-                self.vue.drawObjet(self.ast)
-                y += 0.1
-            self.j = 0
+    def initAsteroide(self): #Initialisation des astéroides de la liste de manière aléatoire
+        for a in self.asteroide:
+            rndX = random.randint(50,450)
+            position = Vecteur(rndX, -20)
+            a.modificationPos(position)
+
+    def deplacementAsteroide(self):
+        for a in self.asteroide :
+            newPos = Vecteur(a.getOrigine().x, a.getOrigine().y + 1)
+            a.modificationPos(newPos)
+
+    def initOvni(self): #Initialisation des ovnis de la liste de manière aléatoire
+        for o in self.ovnis:
+            rndX = random.randint(50,450)
+            maxRndY = random.randint(15, 95)
+            position = Vecteur(rndX, -20)
+            o.modificationPos(position)
+
+    def deplacementOvni(self):
+        for o in self.ovnis:
+            if o.getOrigine().y < o.getMaxY() :
+                newPos = Vecteur(o.getOrigine().x, +1)
+                o.modificationPos(newPos)
+            else :
+                rndDirection = random.randint(0,1)
+                rndWobble = random.randint(o.getOrigine().y -15, o.getOrigine().y +15)
+                if rndDirection == 0 : #vers la gauche
+                    if rndWobble == o.getOrigine().y : #no wobble
+                        newPos = Vecteur(o.getOrigine().x - 1, o.getOrigine().y)
+                    elif rndWobble < o.getOrigine().y : #wobble vers le haut
+                        newPos = Vecteur(o.getOrigine().x - 1, o.getOrigine().y-1)
+                    elif rndWobble > o.getOrigine().y : #wobble vers le bas
+                        newPos = Vecteur(o.getOrigine().x -1, o.getOrigine().y +1)
+                else : #vers la droite
+                    if rndWobble == o.getOrigine().y : #no wobble
+                        newPos = Vecteur(o.getOrigine().x + 1, o.getOrigine().y)
+                    elif rndWobble < o.getOrigine().y : #wobble vers le haut
+                        newPos = Vecteur(o.getOrigine().x + 1, o.getOrigine().y - 1)
+                    elif rndWobble > o.getOrigine().y : #wobble vers le bas
+                        newPos = Vecteur(o.getOrigine().x + 1, o.getOrigine().y + 1)
+
+    # def asteroide(self):
+    #     if self.j <= 175:
+    #         self.j += 1
+    #     else:
+    #         print("asteroides")
+    #         x = random.randint(200, 800)
+    #         y = 0
+    #         affichage = Vecteur(x, y)
+    #         self.ast = Asteroides(self.canvasJeu, affichage)
+    #         self.ast.translateTo(affichage)
+    #         self.ast.modificationPos(affichage)
+    #         self.vue.drawObjet(self.ast)
+    #         for i in range(10000):
+    #             deplacement = Vecteur(x, y)
+    #             self.ast.translateTo(deplacement)
+    #             self.ast.modificationPos(deplacement)
+    #             self.vue.drawObjet(self.ast)
+    #             y += 0.1
+    #         self.j = 0
     
     def sauverScore(self):
         with open('FichierScores.csv', 'a') as csvFile :
