@@ -66,14 +66,15 @@ class JeuControleur:
         self.powerUp = 0
         self.ast = 0
         self.ovnis = []
+        self.asteroide = []
         self.partie = Partie("Isidore")
         for i in range(0, 20):
-            self.ovnis.append(Ovni(self.canvasJeu))
+            self.ovnis.append(Ovni(self.canvasJeu,Vecteur(random.randint(50,450),-20),random.randint(15, 95)))
         for i in range(0,20):
-            self.asteroide.append(Asteroides(self.canvasJeu))
-        self.vue.draw(self.vaisseau)
-        self.vue.draw(self.projectile)
-        self.vue.draw(self.ovnis)
+            self.asteroide.append(Asteroides(self.canvasJeu,Vecteur(random.randint(50,450),-20)))
+        # self.vue.drawObjet(self.vaisseau)
+        # self.vue.drawObjet(self.projectile)
+        # self.vue.drawObjet(self.ovnis)
         self.__defineEvent()
 
     def demarrerPartie(self):
@@ -86,7 +87,7 @@ class JeuControleur:
     def buttonReleased(self, event):
         self.pressed = False
         self.released = True
-        self.tirerProjectile(event.x, event.y)
+        self.tirerProjectile()
 
     def isMoving(self, event):
         self.moving = True
@@ -107,7 +108,8 @@ class JeuControleur:
             #self.deplacementOvnis()
             self.deplacementLogiqueVaisseau(self.x, self.y)
             self.powerUps()
-            self.asteroide()
+            self.deplacementAsteroide()
+            self.deplacementOvni()
         else:
             self.terminerPartie()
 
@@ -127,15 +129,15 @@ class JeuControleur:
         ##Afficher les pouvoirs aleatoirement sur le canvas
         return True
 
-    def deplacementOvnis(self):
-        for ovni in self.ovnis:
-            x = self.ovnis[ovni].getOrigine().x
-            y = self.ovnis[ovni].getOrigine().y
-            deplacement = self.deplacementLogique(ovni, x, y)
+    # def deplacementOvnis(self):
+    #     for ovni in self.ovnis:
+    #         x = self.ovnis[ovni].getOrigine().x
+    #         y = self.ovnis[ovni].getOrigine().y
+    #         deplacement = self.deplacementLogique(ovni, x, y)
 
-            self.ovnis[ovni].translateTo(deplacement)
-            self.ovnis[ovni].modificationPos(deplacement)
-            self.vue.drawObjet(self.ovnis)
+    #         self.ovnis[ovni].translateTo(deplacement)
+    #         self.ovnis[ovni].modificationPos(deplacement)
+    #         self.vue.drawObjet(self.ovnis)
 
     def deplacementLogique(self, ovni, x, y):
         #! Deplacement logique des ovnis ici!
@@ -171,9 +173,10 @@ class JeuControleur:
         #self.canvasJeu.move(self.vaisseau, x, y)
         #self.canvasJeu.update()
 
-    def tirerProjectile(self, x, y):
+    def tirerProjectile(self):
+        y = self.vaisseau.getOrigine().y
         for i in range(y):
-            deplacement = Vecteur(x, y)
+            deplacement = Vecteur(self.vaisseau.getOrigine().x, y)
             self.projectile.translateTo(deplacement)
             self.projectile.modificationPos(deplacement)
             self.vue.drawObjet(self.projectile)
@@ -195,29 +198,17 @@ class JeuControleur:
             self.vue.drawObjet(self.powerUp)
             self.i = 0
 
-    def initAsteroide(self): #Initialisation des astéroides de la liste de manière aléatoire
-        for a in self.asteroide:
-            rndX = random.randint(50,450)
-            position = Vecteur(rndX, -20)
-            a.modificationPos(position)
-
     def deplacementAsteroide(self):
         for a in self.asteroide :
             newPos = Vecteur(a.getOrigine().x, a.getOrigine().y + 1)
+            a.translateTo(newPos)
             a.modificationPos(newPos)
-
-    def initOvni(self): #Initialisation des ovnis de la liste de manière aléatoire
-        for o in self.ovnis:
-            rndX = random.randint(50,450)
-            maxRndY = random.randint(15, 95)
-            position = Vecteur(rndX, -20)
-            o.modificationPos(position)
+            self.vue.drawObjet(a)
 
     def deplacementOvni(self):
         for o in self.ovnis:
             if o.getOrigine().y < o.getMaxY() :
                 newPos = Vecteur(o.getOrigine().x, +1)
-                o.modificationPos(newPos)
             else :
                 rndDirection = random.randint(0,1)
                 rndWobble = random.randint(o.getOrigine().y -15, o.getOrigine().y +15)
@@ -235,6 +226,10 @@ class JeuControleur:
                         newPos = Vecteur(o.getOrigine().x + 1, o.getOrigine().y - 1)
                     elif rndWobble > o.getOrigine().y : #wobble vers le bas
                         newPos = Vecteur(o.getOrigine().x + 1, o.getOrigine().y + 1)
+            #Affichage 
+            o.translateTo(newPos)
+            o.modificationPos(newPos)
+            self.vue.drawObjet(self.powerUp)
 
     # def asteroide(self):
     #     if self.j <= 175:
