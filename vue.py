@@ -3,8 +3,6 @@ from tkinter import simpledialog
 from c31Geometry2 import *
 from tkinter import*
 
-
-
 class MenuVue:
     """ cette classe permet de définir l'aparence du menu
     """
@@ -21,7 +19,7 @@ class MenuVue:
         :type closeApp : method() 
         """
         self.root = root
-        self.score = tk.Label(root, text="")         
+        self.frame = tk.Frame(root, width=300, height=0)        
         self.btn_nouvellePartie = tk.Button(root, text='Nouvelle Partie',
                                             command=fctLancerPartie)
         self.btn_quitApp = tk.Button(root, text='Quitter',
@@ -32,12 +30,16 @@ class MenuVue:
     def draw(self):
         """ dessine le menu graphique et tout les boutons
         """
-        self.btn_nouvellePartie.pack()
-        self.btn_voirScore.pack()
-        self.btn_quitApp.pack() 
+        self.frame.pack()
+        self.btn_nouvellePartie.pack(fill='x',side = "top")
+        self.btn_voirScore.pack(fill='x',side = "top")
+        self.btn_quitApp.pack(fill='x',side = "top") 
 
     def destroy(self):
-        self.canvas.destroy()
+        self.btn_nouvellePartie.destroy()
+        self.btn_quitApp.destroy()
+        self.btn_voirScore.destroy()
+        self.frame.destroy()
 
 class JeuVue:
     """ cette classe permet de définir l'aparence de l'espace de jeu
@@ -51,7 +53,7 @@ class JeuVue:
         self.nom = "" # a aller chercher au debut de la partie et save
         self.score = "" # a changer tout au long de la partie et a save a la fin 
         self.vie = "" # a changer tout au long de la partie
-        self.canvas = tk.Canvas(root, width=1000, height=1000, bg='white') 
+        self.canvas = tk.Canvas(root, width=1000, height=1000, bg='white')
         #self.nom.grid()
         #self.vie.grid()
         #self.score.grid()
@@ -117,15 +119,21 @@ class JeuVue:
         Returns:
             String: le nom choisi        
         """
-        return simpledialog.askstring("Input","Quel est votre nom",parent=root)
+        return simpledialog.askstring("Input", "Quel est votre nom", parent=root)
 
-    def drawObjet(self,objet) :
-        """Permet de dessiner tout les objet ayant un sprite valide(une image) 
+    def drawObjet(self, objet):
+        """Permet de dessiner tous les objet ayant un sprite valide(une image)
         """
         if hasattr(self, 'id'):
             self.canvas.delete(self.id)
-            
-        self.id = self.canvas.create_image(objet.getOrigine().x,objet.getOrigine().y,image=objet.imageTk) #voir les paramètre
+
+        self.id = self.canvas.create_image(objet.getOrigine().x, objet.getOrigine().y, image=objet.imageTk) #voir les paramètre
         
         self.canvas.update()
- 
+
+
+    """
+    def updateObjet(self, objet):
+        self.canvas.move(self.id, objet.getOrigine().x, objet.getOrigine().y)
+        self.canvas.update()
+    """
