@@ -175,7 +175,7 @@ class JeuControleur:
     def deplacementLogiqueVaisseau(self, x, y):
         """Verifie le type de mouvement necessaire par le vaisseau puis appelle deplacementVaisseau
         """
-        speed = 4
+        speed = 3
         if x > self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au nord-est
             self.deplacementVaisseau(self.vaisseau.get_origine().x + speed, self.vaisseau.get_origine().y - speed, 1)
         elif x == self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au nord
@@ -198,31 +198,36 @@ class JeuControleur:
     def deplacementVaisseau(self, x, y, distance):
         """Deplace le vaisseau vers la position de la souris
         """
+        bougeDistance = 3
         a = 0
         b = 0
         if distance == 1:
-            a = 1
-            b = -1
+            a = bougeDistance
+            b = -bougeDistance
         elif distance == 2:
-            b = -1
-        elif distance == 3:
-            a = -1
-            b = -1
-        elif distance == 4:
-            a = -1
-        elif distance == 5:
-            a = -1
-            b = 1
-        elif distance == 6:
-            b = 1
-        elif distance == 7:
-            a = 1
-            b = 1
-        elif distance == 8:
-            a = 1
-        elif distance == 9:
             a = 0
+            b = -bougeDistance
+        elif distance == 3:
+            a = -bougeDistance
+            b = -bougeDistance
+        elif distance == 4:
+            a = -bougeDistance
             b = 0
+        elif distance == 5:
+            a = -bougeDistance
+            b = bougeDistance
+        elif distance == 6:
+            a = 0
+            b = bougeDistance
+        elif distance == 7:
+            a = bougeDistance
+            b = bougeDistance
+        elif distance == 8:
+            a = bougeDistance
+            b = 0
+        elif distance == 9:
+            a = bougeDistance
+            b = bougeDistance
         deplacement = Vecteur(x, y)
         self.vaisseau.translateTo(deplacement)
         self.vaisseau.modificationPos(deplacement)
