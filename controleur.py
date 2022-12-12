@@ -104,8 +104,8 @@ class JeuControleur:
         if not self.verifierCollision():
             self.deplacementLogiqueVaisseau(self.x, self.y)
             self.powerUps()
-            self.deplacementAsteroide()
-            self.deplacementOvni()
+            #self.deplacementAsteroide()
+            #self.deplacementOvni()
         else:
             self.terminerPartie()
 
@@ -124,40 +124,69 @@ class JeuControleur:
         return True
 
     def deplacementLogiqueVaisseau(self, x, y):
+        
         speed = 4
         if x > self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au nord-est
-            self.deplacementVaisseau(self.vaisseau.get_origine().x + speed, self.vaisseau.get_origine().y - speed)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x + speed, self.vaisseau.get_origine().y - speed, 1)
         elif x == self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au nord
-            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y - speed)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y - speed, 2)
         elif x < self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au nord-ouest
-            self.deplacementVaisseau(self.vaisseau.get_origine().x - speed, self.vaisseau.get_origine().y - speed)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x - speed, self.vaisseau.get_origine().y - speed, 3)
         elif x < self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est à l'ouest
-            self.deplacementVaisseau(self.vaisseau.get_origine().x - speed, self.vaisseau.get_origine().y)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x - speed, self.vaisseau.get_origine().y, 4)
         elif x < self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au sud-ouest
-            self.deplacementVaisseau(self.vaisseau.get_origine().x - speed, self.vaisseau.get_origine().y + speed)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x - speed, self.vaisseau.get_origine().y + speed, 5)
         elif x == self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au sud
-            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y + speed)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y + speed, 6)
         elif x > self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au sud-est
-            self.deplacementVaisseau(self.vaisseau.get_origine().x + speed, self.vaisseau.get_origine().y + speed)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x + speed, self.vaisseau.get_origine().y + speed, 7)
         elif x > self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est à l'est
-            self.deplacementVaisseau(self.vaisseau.get_origine().x + speed, self.vaisseau.get_origine().y)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x + speed, self.vaisseau.get_origine().y, 8)
         elif x == self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est sur l'origine du vaisseau
-            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y, 9)
 
-    def deplacementVaisseau(self,x,y):
+    def deplacementVaisseau(self, x, y, distance):
+        a = 0
+        b = 0
+        if distance == 1:
+            a = 1
+            b = -1
+        elif distance == 2:
+            b = -1
+        elif distance == 3:
+            a = -1
+            b = -1
+        elif distance == 4:
+            a = -1
+        elif distance == 5:
+            a = -1
+            b = 1
+        elif distance == 6:
+            b = 1
+        elif distance == 7:
+            a = 1
+            b = 1
+        elif distance == 8:
+            a = 1
+        elif distance == 9:
+            a = 0
+            b = 0
         deplacement = Vecteur(x, y)
         self.vaisseau.translateTo(deplacement)
         self.vaisseau.modificationPos(deplacement)
-        self.vue.drawObjet(self.vaisseau)
+        self.vue.updateObjet(self.vaisseau, a, b)
 
     def tirerProjectile(self):
         y = self.vaisseau.getOrigine().y
+        deplacement = Vecteur(self.vaisseau.getOrigine().x, y)
+        self.projectile.translateTo(deplacement)
+        self.projectile.modificationPos(deplacement)
+        self.vue.drawObjet(self.projectile)
         for i in range(y):
             deplacement = Vecteur(self.vaisseau.getOrigine().x, y)
             self.projectile.translateTo(deplacement)
             self.projectile.modificationPos(deplacement)
-            self.vue.drawObjet(self.projectile)
-            y -= 1
+            self.vue.updateObjet(self.projectile, 0, -1)
 
     def powerUps(self):
         if self.i <= 100:

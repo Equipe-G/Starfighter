@@ -132,7 +132,7 @@ class JeuVue:
         self.canvas.update()
 
     
-    def updateObjet(self, objet):
-        self.canvas.move(objet.id, objet.getOrigine().x, objet.getOrigine().y)
+    def updateObjet(self, objet, x, y):
+        self.canvas.move(objet.id, x, y)
         self.canvas.update()
     
