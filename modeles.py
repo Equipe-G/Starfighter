@@ -178,36 +178,15 @@ class Projectile(objetVolant):
         Ceux de la superclasse ObjetVolant
     """ 
     def __init__(self, canvas, origine):
+        """Permet de definir un projectile 
+
+        Initialise super et imageTk
+            Args: 
+                canvas (tk.Canvas): canvas où l'on dessine le carré
+        """ 
         self.lienImage = "Image/Lazer.png"
         self.id = ""
         super().__init__(canvas, 10, 1, 1, 2, origine, self.lienImage, 40, 40)
-
-    def getOrigine(self) -> Vecteur:
-        """Permet de récupérer l'origine du projectile
-        Returns:
-            Vecteur: Origine du projectile
-        """
-        return super().get_position()
-
-    def modificationPos(self, position: Vecteur):
-        """Définit l'origine du projectile et le deplace
-        Args:
-            position (Vecteur): Nouvelle position du projectile
-        """
-        self.origine = position
-        super().translateTo(position)
-
-    def getPetitRayon(self):
-        return self.petitRayon
-
-    def getGrandRayon(self):
-        return self.grandRayon
-
-    def getVitesse(self):
-        return self.vitesse
-
-    def setVitesse(self, vitesse):
-        self.vitesse = vitesse
         
 class Vaisseau(objetVolant):
     """Cette classe est represente le vaisseau du joueur (Herite de ObjetVolant)
@@ -306,7 +285,7 @@ class Partie:
         """
         return self.nomJoueur
     
-    def getNom(self):
+    def getScore(self):
         """Permet de récupérer score cette partie
         Returns:
             string: score

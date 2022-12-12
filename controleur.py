@@ -6,18 +6,36 @@ from time import sleep
 import random
 
 class MenuControleur:
+    """Permet de controler le menu du programme
+    Attributes:
+        jeuControleur: controleur du jeu
+        vue: la vue du menu
+    """
     def __init__(self, root, jeuControleur):
+        """Permet de definir un controleur de menu et affiche le menu
+            Initialise jeuControleur et vue
+            Args:
+                root(tk): la fenetre tkinter 
+                jeuControleur(JeuControleur): controleur du jeu
+        """
         self.jeuControleur = jeuControleur
         self.vue = MenuVue(root, self.commencerJeu, self.afficherScore, self.quitter)
         self.vue.draw()
 
     def commencerJeu(self):
+        """Debute le jeu
+            Enleve le menu et affiche le jeu
+        """
         self.vue.destroy()
         self.jeuControleur.genererJeu()
 
     def quitter(self):
+        """Quitte le jeu
+        """
         self.jeuControleur.vue.destroy(self.jeuControleur.vue.root)
     def afficherScore(self):
+        """Affiche les scores dans le fichier csv en les organisants du plus grand au plus petit
+        """
         # Lecture du fichier csv
         self.dataRead = []
         self.string = ""
@@ -46,13 +64,38 @@ class MenuControleur:
         self.vue.setScore(self.string)
 
 class JeuControleur:
+    """Permet de controler le jeu
+    Attributes:
+        root: la fenetre tkinter
+        vue: la vue du jeu
+        moving: si le joueur bouge
+        released: si le bouton de souris et relache
+        i: loop du jeu? //a completer
+        j: pas utilisé? // a completer
+        partie: les attributs de la la partie actuelle
+        partieEnCours: si la partie est active
+        canvasJeu: le canvas tkinter
+        background: l'arriere plan
+        vaisseau: les atributs du vaisseau du joueur
+        projectile:les atributs d'un projectile le nombre de powerups
+        ast: ? //a completer
+        ovnis: tableau contenant les ovnis ennemis
+        asteroide: tableau contenant les asteroides
+    """
     def __init__(self, root):
+        """Permet de definir un controleur de jeu et affiche le jeu
+            Initialise moving, released, i, j, root, partie et vue
+            Args:
+                root(tk): la fenetre tkinter 
+        """
         self.root = root
         self.vue = JeuVue(root)
+        #self.vue.setNom(self.nom)
         self.moving = False
         self.released = False
         self.i = 0
         self.j = 0
+        #self.partie = Partie(self.nom)
 
     def genererJeu(self):
         self.partieEnCours = False
@@ -67,7 +110,6 @@ class JeuControleur:
         self.ast = 0
         self.ovnis = []
         self.asteroide = []
-        self.partie = Partie("Isidore")
         for i in range(0, 20):
             self.ovnis.append(Ovni(self.canvasJeu, Vecteur(random.randint(50, 450), - 20), random.randint(15, 95)))
         for i in range(0, 20):
@@ -95,6 +137,9 @@ class JeuControleur:
             self.debuter()
 
     def debuter(self):
+        """Debute la partie actuelle
+            Commence la boucle de jeu
+        """
         self.partieEnCours = True
         if self.partieEnCours:
             self.e = LoopEvent(self.vue.root, self.roulerJeu, 15)
@@ -110,10 +155,14 @@ class JeuControleur:
             self.terminerPartie()
 
     def terminerPartie(self):
+        """Termine la partie actuelle
+            Enleve le canevas, arrête la boucle, puis sauvegarde le score
+        """
         self.vue.destroy(self.vue.root)
         self.e.stop()
-        self.genererJeu()
+        self.genererJeu() #Besoind de ca? C'est pas le menu qui va en créer une autre apres?
         sleep(1)
+        #self.sauverScore()
 
     def verifierCollision(self):
         vaisseauX = self.vaisseau.getOrigine().x
@@ -124,7 +173,8 @@ class JeuControleur:
         return True
 
     def deplacementLogiqueVaisseau(self, x, y):
-        
+        """Verifie le type de mouvement necessaire par le vaisseau puis appelle deplacementVaisseau
+        """
         speed = 4
         if x > self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au nord-est
             self.deplacementVaisseau(self.vaisseau.get_origine().x + speed, self.vaisseau.get_origine().y - speed, 1)
@@ -142,7 +192,11 @@ class JeuControleur:
             self.deplacementVaisseau(self.vaisseau.get_origine().x + speed, self.vaisseau.get_origine().y + speed, 7)
         elif x > self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est à l'est
             self.deplacementVaisseau(self.vaisseau.get_origine().x + speed, self.vaisseau.get_origine().y, 8)
-        elif x == self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est sur l'origine du vaisseau
+        elif x == self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est sur l'origine du vaisseau            
+
+    def deplacementVaisseau(self,x,y):
+        """Deplace le vaisseau vers la position de la souris
+        """
             self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y, 9)
 
     def deplacementVaisseau(self, x, y, distance):
@@ -177,6 +231,9 @@ class JeuControleur:
         self.vue.updateObjet(self.vaisseau, a, b)
 
     def tirerProjectile(self):
+        """Tire un projectile
+            //j'ai des questions sur cette methode
+        """
         y = self.vaisseau.getOrigine().y
         deplacement = Vecteur(self.vaisseau.getOrigine().x, y)
         self.projectile.translateTo(deplacement)
@@ -205,13 +262,18 @@ class JeuControleur:
             self.i = 0
 
     def deplacementAsteroide(self):
-        for a in self.asteroide:
+        """Deplace les asteroides vers le bas de la page
+        """
+        for a in self.asteroide :
             newPos = Vecteur(a.getOrigine().x, a.getOrigine().y + 1)
             a.translateTo(newPos)
             a.modificationPos(newPos)
             self.vue.drawObjet(a)
 
     def deplacementOvni(self):
+        """Deplace les ovnis
+            //a completer
+        """
         for o in self.ovnis:
             if o.getOrigine().y < o.getMaxY():
                 newPos = Vecteur(o.getOrigine().x, +1)
@@ -238,6 +300,8 @@ class JeuControleur:
             self.vue.drawObjet(o)
 
     def sauverScore(self):
+        """Permet d'ajouter les informations de cette session dans le fichier csv
+        """
         with open('FichierScores.csv', 'a') as csvFile :
             ecriture_score = csv.writer(csvFile, delimiter=',')
             texte = [self.partie.getNom(), str(self.partie.getTemps()), self.partie.getScore()]
