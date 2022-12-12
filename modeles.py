@@ -2,8 +2,6 @@ import time
 from c31Geometry2 import *
 from PIL import ImageTk, Image
 
-
-
 class objetVolant(Oval):
     """Cette classe est la parente de tout objet volant (Herite de Oval de c31Geometry2)
     
@@ -126,6 +124,7 @@ class PowerUp(objetVolant):
                 origine(Vecteur): position de l'objet
         """
         self.lienImage = ""
+        self.id = ""
 
         if power == 1:
             self.lienImage = "Image/powerUp1.png"
@@ -186,6 +185,7 @@ class Projectile(objetVolant):
                 canvas (tk.Canvas): canvas où l'on dessine le carré
         """ 
         self.lienImage = "Image/Lazer.png"
+        self.id = ""
         super().__init__(canvas, 10, 1, 1, 2, origine, self.lienImage, 40, 40)
         
 class Vaisseau(objetVolant):
@@ -202,7 +202,8 @@ class Vaisseau(objetVolant):
                 canvas (tk.Canvas): canvas où l'on dessine le carré
         """ 
         self.lienImage = "Image/Vaisseau.png"
-        super().__init__(canvas, 10, 100, 50, 100 , Vecteur(500,900), self.lienImage, 200, 200)
+        self.id = ""
+        super().__init__(canvas, 10, 100, 50, 100 , Vecteur(500, 900), self.lienImage, 200, 200)
 
 class Ovni(objetVolant):
     """Cette classe est represente un ovni ennemi (Herite de ObjetVolant)
@@ -220,7 +221,7 @@ class Ovni(objetVolant):
         """ 
         self.maxY = maxY
         self.lienImage = "Image/Alien.png"
-        super().__init__(canvas, 5, 10, 20, 50 , origine, self.lienImage, 150, 150)
+        super().__init__(canvas, 5, 10, 20, 50, origine, self.lienImage, 150, 150)
         
     def getMaxY(self):
         """Permet de récupérer le maxY de l'ovni
@@ -242,7 +243,8 @@ class Asteroides(objetVolant):
             Args: 
                 canvas (tk.Canvas): canvas où l'on dessine le carré
         """ 
-        self.lienImage = "Image/asteroide.png" 
+        self.lienImage = "Image/asteroide.png"
+        self.id = "" 
         super().__init__(canvas, 3, 1, 20, 20, origine, self.lienImage, 150, 150)
 
 class Background:
