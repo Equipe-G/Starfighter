@@ -193,13 +193,11 @@ class JeuControleur:
         elif x > self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est à l'est
             self.deplacementVaisseau(self.vaisseau.get_origine().x + speed, self.vaisseau.get_origine().y, 8)
         elif x == self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est sur l'origine du vaisseau            
-
-    def deplacementVaisseau(self,x,y):
+            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y, 9)
+                    
+    def deplacementVaisseau(self, x, y, distance):
         """Deplace le vaisseau vers la position de la souris
         """
-            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y, 9)
-
-    def deplacementVaisseau(self, x, y, distance):
         a = 0
         b = 0
         if distance == 1:
