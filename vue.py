@@ -124,16 +124,15 @@ class JeuVue:
     def drawObjet(self, objet):
         """Permet de dessiner tous les objet ayant un sprite valide(une image)
         """
-        if hasattr(self, 'id'):
-            self.canvas.delete(self.id)
+        if hasattr(objet, 'id'):
+            self.canvas.delete(objet.id)
 
-        self.id = self.canvas.create_image(objet.getOrigine().x, objet.getOrigine().y, image=objet.imageTk) #voir les paramètre
+        objet.id = self.canvas.create_image(objet.getOrigine().x, objet.getOrigine().y, image=objet.imageTk) #voir les paramètre
         
         self.canvas.update()
 
-
-    """
-    def updateObjet(self, objet):
-        self.canvas.move(self.id, objet.getOrigine().x, objet.getOrigine().y)
+    
+    def updateObjet(self, objet, x, y):
+        self.canvas.move(objet.id, x, y)
         self.canvas.update()
-    """
+    
