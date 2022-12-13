@@ -244,7 +244,7 @@ class Asteroides(objetVolant):
         """ 
         self.lienImage = "Image/asteroide.png"
         self.id = "" 
-        super().__init__(canvas, 3, 1, 150, 150, origine, self.lienImage, 150, 150)
+        super().__init__(canvas, 3, 1, 100, 100, origine, self.lienImage, 100, 100)
 
 class Background:
     """Cette classe est represente l'arriere plan
