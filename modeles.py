@@ -125,51 +125,36 @@ class PowerUp(objetVolant):
         """
         self.lienImage = ""
         self.id = ""
+        self.power = power
 
-        if power == 1:
+        if self.power == 1:
             self.lienImage = "Image/powerUp1.png"
-        elif power == 2:
+        elif self.power == 2:
             self.lienImage = "Image/powerUp2.png"
-        elif power == 3:
+        elif self.power == 3:
             self.lienImage = "Image/powerUp3.png"
 
-        super().__init__(canvas, 0, 0, 10, 15, origine, self.lienImage, 30, 45)
+        super().__init__(canvas, 0, 1, 30, 45, origine, self.lienImage, 30, 45)
+
+    def activerPouvoir(self, vaisseau):
+        if self.power == 1:
+            vaisseau.setVitesse(20)
+        elif self.power == 2:
+            vaisseau.setVie(vaisseau.getVie() + 5)
+        elif self.power == 3:
+            self.power = self.power #placeholder
+        #pour en faire un avec la taille du vasseau faudrais changer petit rayon grand rayon et resize l'image
+
+    def desactiverPouvoir(self, vaisseau):
+        if self.power == 1:
+            vaisseau.setVitesse(10)
+        elif self.power == 2:
+            self.power = self.power #placeholder
+        elif self.power == 3:
+            self.power = self.power #placeholder
     
-    def getOrigine(self) -> Vecteur:
-        """Permet de récupérer l'origine du powerup
-        Returns:
-            int: position du powerup
-        """
-        return super().get_position()
+    
 
-    def modificationPos(self, position: Vecteur):
-        """Définit l'origine du powerup et le deplace
-        Args:
-            position (Vecteur): Nouvelle position du powerup
-        """
-        self.origine = position
-        super().translateTo(position)
-
-    def getVitesse(self):
-        """Permet de récupérer la vitesse du powerup
-        Returns:
-            int: vitesse de mouvement du powerup
-        """
-        return self.vitesse
-
-    def setVitesse(self, vitesse):
-        """Change la vitesse du powerup
-        Args:
-            petitRayon (int): nouvelle vitesse de mouvement du powerup
-        """
-        self.vitesse = vitesse
-
-    def getRayon(self):
-        """Permet de récupérer le rayon du powerup
-        Returns:
-            int: taille du rayon du powerup
-        """
-        return self.rayon
 
 class Projectile(objetVolant):
     """Cette classe est represente un projectile tire par un vaisseau ou ovni (Herite de ObjetVolant)
@@ -186,7 +171,7 @@ class Projectile(objetVolant):
         """ 
         self.lienImage = "Image/Lazer.png"
         self.id = ""
-        super().__init__(canvas, 10, 1, 1, 2, origine, self.lienImage, 40, 40)
+        super().__init__(canvas, 10, 1, 40, 40, origine, self.lienImage, 40, 40)
         
 class Vaisseau(objetVolant):
     """Cette classe est represente le vaisseau du joueur (Herite de ObjetVolant)
@@ -203,7 +188,7 @@ class Vaisseau(objetVolant):
         """ 
         self.lienImage = "Image/Vaisseau.png"
         self.id = ""
-        super().__init__(canvas, 10, 100, 50, 100 , Vecteur(500, 900), self.lienImage, 200, 200)
+        super().__init__(canvas, 10, 100, 200, 200 , Vecteur(500, 900), self.lienImage, 200, 200)
 
 class Ovni(objetVolant):
     """Cette classe est represente un ovni ennemi (Herite de ObjetVolant)
@@ -212,7 +197,7 @@ class Ovni(objetVolant):
         Ceux de la superclasse ObjetVolant
         maxY(int): le plus haut que l'ovni peut aller
     """ 
-    def __init__(self, canvas, origine, maxY):
+    def __init__(self, canvas, origine, maxY, taille = 150):
         """Permet de definir un ovni 
 
         Initialise super et imageTk
@@ -221,7 +206,7 @@ class Ovni(objetVolant):
         """ 
         self.maxY = maxY
         self.lienImage = "Image/Alien.png"
-        super().__init__(canvas, 5, 10, 20, 50, origine, self.lienImage, 150, 150)
+        super().__init__(canvas, 5, 10, taille, taille, origine, self.lienImage, taille, taille)
         
     def getMaxY(self):
         """Permet de récupérer le maxY de l'ovni
@@ -229,6 +214,20 @@ class Ovni(objetVolant):
             int: le plus haut que l'ovni peut aller
         """
         return self.maxY
+
+class Boss(Ovni):
+    """Cette classe est represente un boss ennemi (Herite de Ovni)
+    
+    Attributes:
+        Ceux de la superclasse Ovni
+    """ 
+    def __init__(self, canvas, origine, maxY):
+        """Permet de definir un boss
+        Initialise super et imageTk
+            Args: 
+                canvas (tk.Canvas): canvas où l'on dessine le carré
+        """ 
+        super().__init__(canvas, origine, maxY, 300)
 
 class Asteroides(objetVolant):
     """Cette classe est represente les asteroides (Herite de ObjetVolant)
@@ -245,7 +244,7 @@ class Asteroides(objetVolant):
         """ 
         self.lienImage = "Image/asteroide.png"
         self.id = "" 
-        super().__init__(canvas, 3, 1, 20, 20, origine, self.lienImage, 150, 150)
+        super().__init__(canvas, 3, 1, 150, 150, origine, self.lienImage, 150, 150)
 
 class Background:
     """Cette classe est represente l'arriere plan
