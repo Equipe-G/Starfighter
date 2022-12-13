@@ -78,7 +78,6 @@ class JeuControleur:
         background: l'arriere plan
         vaisseau: les atributs du vaisseau du joueur
         projectile:les atributs d'un projectile le nombre de powerups
-        ast: ? //a completer
         ovnis: tableau contenant les ovnis ennemis
         asteroide: tableau contenant les asteroides
     """
@@ -107,8 +106,7 @@ class JeuControleur:
         self.vue.drawObjet(self.vaisseau)
         self.projectile = Projectile(self.canvasJeu, self.vaisseau.getOrigine())
         self.powerUp = 0
-        self.ast = 0
-        self.asteroideSpawnRate = 3
+        self.asteroideSpawnRate = 1
         self.ovnisSpawnRate = 3
         self.ovnis = []
         self.asteroide = []
@@ -267,11 +265,11 @@ class JeuControleur:
 
     def initOvnis(self):
         if(random.randint(0,1000) <= self.ovnisSpawnRate):
-            self.ovnis.append(Ovni(self.canvasJeu, Vecteur(random.randint(50, 450), - 20), random.randint(15, 295)))
+            self.ovnis.append(Ovni(self.canvasJeu, Vecteur(random.randint(50, 900), - 20), random.randint(15, 295)))
 
     def intAsteroide(self):
         if(random.randint(0,1000) <= self.asteroideSpawnRate):
-            self.asteroide.append(Asteroides(self.canvasJeu, Vecteur(random.randint(50, 650), - 20)))
+            self.asteroide.append(Asteroides(self.canvasJeu, Vecteur(random.randint(50, 900), - 20)))
 
     def deplacementAsteroide(self):
         """Deplace les asteroides vers le bas de la page
@@ -287,26 +285,7 @@ class JeuControleur:
             //a completer
         """
         for o in self.ovnis:
-            if o.getOrigine().y < o.getMaxY():
-                newPos = Vecteur(o.getOrigine().x, o.getOrigine().y+1)
-            else:
-                rndDirection = random.randint(0,1)
-                rndWobble = random.randint(o.getOrigine().y -15, o.getOrigine().y +15)
-                if rndDirection == 0 : #vers la gauche
-                    if rndWobble == o.getOrigine().y : #no wobble
-                        newPos = Vecteur(o.getOrigine().x - 1, o.getOrigine().y)
-                    elif rndWobble < o.getOrigine().y : #wobble vers le haut
-                        newPos = Vecteur(o.getOrigine().x - 1, o.getOrigine().y-1)
-                    elif rndWobble > o.getOrigine().y : #wobble vers le bas
-                        newPos = Vecteur(o.getOrigine().x -1, o.getOrigine().y +1)
-                else : #vers la droite
-                    if rndWobble == o.getOrigine().y : #no wobble
-                        newPos = Vecteur(o.getOrigine().x + 1, o.getOrigine().y)
-                    elif rndWobble < o.getOrigine().y : #wobble vers le haut
-                        newPos = Vecteur(o.getOrigine().x + 1, o.getOrigine().y - 1)
-                    elif rndWobble > o.getOrigine().y : #wobble vers le bas
-                        newPos = Vecteur(o.getOrigine().x + 1, o.getOrigine().y + 1)
-            #Affichage
+            newPos = Vecteur(o.getOrigine().x, o.getOrigine().y+1)
             o.translateTo(newPos)
             o.modificationPos(newPos)
             self.vue.drawObjet(o)
