@@ -175,30 +175,29 @@ class JeuControleur:
     def deplacementLogiqueVaisseau(self, x, y):
         """Verifie le type de mouvement necessaire par le vaisseau puis appelle deplacementVaisseau
         """
-        speed = 3
         if x > self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au nord-est
-            self.deplacementVaisseau(self.vaisseau.get_origine().x + speed, self.vaisseau.get_origine().y - speed, 1)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x + self.vaisseau.getVitesse(), self.vaisseau.get_origine().y - self.vaisseau.getVitesse(), 1)
         elif x == self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au nord
-            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y - speed, 2)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y - self.vaisseau.getVitesse(), 2)
         elif x < self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au nord-ouest
-            self.deplacementVaisseau(self.vaisseau.get_origine().x - speed, self.vaisseau.get_origine().y - speed, 3)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x - self.vaisseau.getVitesse(), self.vaisseau.get_origine().y - self.vaisseau.getVitesse(), 3)
         elif x < self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est à l'ouest
-            self.deplacementVaisseau(self.vaisseau.get_origine().x - speed, self.vaisseau.get_origine().y, 4)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x - self.vaisseau.getVitesse(), self.vaisseau.get_origine().y, 4)
         elif x < self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au sud-ouest
-            self.deplacementVaisseau(self.vaisseau.get_origine().x - speed, self.vaisseau.get_origine().y + speed, 5)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x - self.vaisseau.getVitesse(), self.vaisseau.get_origine().y + self.vaisseau.getVitesse(), 5)
         elif x == self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au sud
-            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y + speed, 6)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y + self.vaisseau.getVitesse(), 6)
         elif x > self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au sud-est
-            self.deplacementVaisseau(self.vaisseau.get_origine().x + speed, self.vaisseau.get_origine().y + speed, 7)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x + self.vaisseau.getVitesse(), self.vaisseau.get_origine().y + self.vaisseau.getVitesse(), 7)
         elif x > self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est à l'est
-            self.deplacementVaisseau(self.vaisseau.get_origine().x + speed, self.vaisseau.get_origine().y, 8)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x + self.vaisseau.getVitesse(), self.vaisseau.get_origine().y, 8)
         elif x == self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est sur l'origine du vaisseau            
             self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y, 9)
                     
     def deplacementVaisseau(self, x, y, distance):
         """Deplace le vaisseau vers la position de la souris
         """
-        bougeDistance = 3
+        bougeDistance = self.vaisseau.getVitesse()
         a = 0
         b = 0
         if distance == 1:

@@ -188,7 +188,7 @@ class Vaisseau(objetVolant):
         """ 
         self.lienImage = "Image/Vaisseau.png"
         self.id = ""
-        super().__init__(canvas, 10, 100, 200, 200 , Vecteur(500, 900), self.lienImage, 200, 200)
+        super().__init__(canvas, 3, 100, 200, 200 , Vecteur(500, 900), self.lienImage, 200, 200)
 
 class Ovni(objetVolant):
     """Cette classe est represente un ovni ennemi (Herite de ObjetVolant)
@@ -206,7 +206,7 @@ class Ovni(objetVolant):
         """ 
         self.maxY = maxY
         self.lienImage = "Image/Alien.png"
-        super().__init__(canvas, 5, 10, taille, taille, origine, self.lienImage, taille, taille)
+        super().__init__(canvas, 1, 10, taille, taille, origine, self.lienImage, taille, taille)
         
     def getMaxY(self):
         """Permet de récupérer le maxY de l'ovni
