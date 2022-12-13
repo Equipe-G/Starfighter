@@ -108,12 +108,11 @@ class JeuControleur:
         self.projectile = Projectile(self.canvasJeu, self.vaisseau.getOrigine())
         self.powerUp = 0
         self.ast = 0
+        self.asteroideSpawnRate = 3
+        self.ovnisSpawnRate = 3
         self.ovnis = []
         self.asteroide = []
-        for i in range(0, 20):
-            self.ovnis.append(Ovni(self.canvasJeu, Vecteur(random.randint(50, 450), - 20), random.randint(15, 95)))
-        for i in range(0, 20):
-            self.asteroide.append(Asteroides(self.canvasJeu, Vecteur(random.randint(50, 450), - 20)))
+   
         self.__defineEvent()
 
     def demarrerPartie(self):
@@ -147,10 +146,12 @@ class JeuControleur:
 
     def roulerJeu(self):
         if not self.verifierCollision():
+            self.intAsteroide()
+            self.initOvnis()
             self.deplacementLogiqueVaisseau(self.x, self.y)
             self.powerUps()
-            #self.deplacementAsteroide()
-            #self.deplacementOvni()
+            self.deplacementAsteroide()
+            self.deplacementOvni()
         else:
             self.terminerPartie()
 
@@ -264,6 +265,14 @@ class JeuControleur:
             self.vue.drawObjet(self.powerUp)
             self.i = 0
 
+    def initOvnis(self):
+        if(random.randint(0,1000) <= self.ovnisSpawnRate):
+            self.ovnis.append(Ovni(self.canvasJeu, Vecteur(random.randint(50, 450), - 20), random.randint(15, 295)))
+
+    def intAsteroide(self):
+        if(random.randint(0,1000) <= self.asteroideSpawnRate):
+            self.asteroide.append(Asteroides(self.canvasJeu, Vecteur(random.randint(50, 650), - 20)))
+
     def deplacementAsteroide(self):
         """Deplace les asteroides vers le bas de la page
         """
@@ -279,7 +288,7 @@ class JeuControleur:
         """
         for o in self.ovnis:
             if o.getOrigine().y < o.getMaxY():
-                newPos = Vecteur(o.getOrigine().x, +1)
+                newPos = Vecteur(o.getOrigine().x, o.getOrigine().y+1)
             else:
                 rndDirection = random.randint(0,1)
                 rndWobble = random.randint(o.getOrigine().y -15, o.getOrigine().y +15)
