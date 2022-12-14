@@ -89,12 +89,10 @@ class JeuControleur:
         """
         self.root = root
         self.vue = JeuVue(root)
-        #self.vue.setNom(self.nom)
         self.moving = False
         self.released = False
         self.i = 0
         self.j = 0
-        #self.partie = Partie(self.nom)
 
     def genererJeu(self):
         self.partieEnCours = False
@@ -111,7 +109,7 @@ class JeuControleur:
         self.ovnis = []
         self.asteroide = []
         self.powerUps = []
-        self.vue.setScore("200")
+        self.vue.setScore("0")
         self.vue.setVie("100")
    
         self.__defineEvent()
@@ -133,7 +131,8 @@ class JeuControleur:
         self.x = event.x
         self.y = event.y
         if not self.partieEnCours:
-            #self.partie = Partie()
+            self.nom = self.vue.demanderNom(self.root)
+            self.partie = Partie(self.nom)
             self.debuter()
 
     def debuter(self):
@@ -146,7 +145,7 @@ class JeuControleur:
             self.e.start()
 
     def roulerJeu(self):
-        if not self.verifierCollision():
+        if(self.vaisseau.getVie() > 0):
             self.initAsteroide()
             self.initOvnis()
             self.deplacementLogiqueVaisseau(self.x, self.y)
@@ -251,7 +250,7 @@ class JeuControleur:
             a = 0
             b = 0
         deplacement = Vecteur(x, y)
-        self.vaisseau.translateTo(deplacement)
+        #self.vaisseau.translateTo(deplacement)
         self.vaisseau.modificationPos(deplacement)
         self.vue.updateObjet(self.vaisseau, a, b)
 
@@ -262,11 +261,11 @@ class JeuControleur:
         y = self.vaisseau.getOrigine().y
         deplacement = Vecteur(self.vaisseau.getOrigine().x, y)
         self.projectile.translateTo(deplacement)
-        self.projectile.modificationPos(deplacement)
+        #self.projectile.modificationPos(deplacement)
         self.vue.drawObjet(self.projectile)
         for i in range(y):
             deplacement = Vecteur(self.vaisseau.getOrigine().x, y)
-            self.projectile.translateTo(deplacement)
+            #self.projectile.translateTo(deplacement)
             self.projectile.modificationPos(deplacement)
             self.vue.updateObjet(self.projectile, 0, -1.5)
 
@@ -279,7 +278,7 @@ class JeuControleur:
 
             powerUp = PowerUp(self.canvasJeu, affichage, power)
             self.powerUps.append(powerUp)
-            powerUp.translateTo(affichage)
+            #powerUp.translateTo(affichage)
             powerUp.modificationPos(affichage)
             self.vue.drawObjet(powerUp)
 
@@ -289,7 +288,7 @@ class JeuControleur:
             pos = Vecteur(x, -20)
             newOvni = Ovni(self.canvasJeu, pos, random.randint(15, 295))
             self.ovnis.append(newOvni)            
-            newOvni.translateTo(pos)
+            #newOvni.translateTo(pos)
             newOvni.modificationPos(pos)
             self.vue.drawObjet(newOvni)
 
@@ -299,7 +298,7 @@ class JeuControleur:
             pos = Vecteur(x, -20)
             newAsteroide = Asteroides(self.canvasJeu, pos)
             self.asteroide.append(newAsteroide)
-            newAsteroide.translateTo(pos)
+            #newAsteroide.translateTo(pos)
             newAsteroide.modificationPos(pos)
             self.vue.drawObjet(newAsteroide)
 
@@ -308,7 +307,7 @@ class JeuControleur:
         """
         for p in self.powerUps:
             newPos = Vecteur(p.getOrigine().x, p.getOrigine().y + 1)
-            p.translateTo(newPos)
+            #p.translateTo(newPos)
             p.modificationPos(newPos)
             self.vue.updateObjet(p, 0, 2)
             

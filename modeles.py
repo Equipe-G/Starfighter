@@ -197,7 +197,7 @@ class Ovni(objetVolant):
         Ceux de la superclasse ObjetVolant
         maxY(int): le plus haut que l'ovni peut aller
     """ 
-    def __init__(self, canvas, origine, maxY, taille = 150):
+    def __init__(self, canvas, origine, maxY, taille = 80):
         """Permet de definir un ovni 
 
         Initialise super et imageTk
@@ -207,7 +207,7 @@ class Ovni(objetVolant):
         self.maxY = maxY
         self.lienImage = "Image/Alien.png"
         self.id = ""
-        super().__init__(canvas, 1, 25, taille, taille, origine, self.lienImage, taille/1.5, taille/1.5)
+        super().__init__(canvas, 1, 25, taille, taille, origine, self.lienImage, taille, taille)
         
     def getMaxY(self):
         """Permet de récupérer le maxY de l'ovni
@@ -228,7 +228,7 @@ class Boss(Ovni):
             Args: 
                 canvas (tk.Canvas): canvas où l'on dessine le carré
         """ 
-        super().__init__(canvas, origine, maxY, 300)
+        super().__init__(canvas, origine, maxY, 160)
 
 class Asteroides(objetVolant):
     """Cette classe est represente les asteroides (Herite de ObjetVolant)

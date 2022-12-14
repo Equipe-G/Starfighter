@@ -27,16 +27,7 @@ class MenuVue:
         self.btn_voirScore = tk.Button(root, text='Meilleur score',
                                             command=voirScore)
 
-    def demanderNom(self,root) :
-        """ demande le nom de l'utulisateur dans un pop up
-
-        Args: 
-            root (tk.Widjet) : Widget parent de notre boucle
-
-        Returns:
-            String: le nom choisi        
-        """
-        return simpledialog.askstring("Input", "Quel est votre nom", parent=root)
+    
 
     def draw(self):
         """ dessine le menu graphique et tout les boutons
@@ -45,7 +36,6 @@ class MenuVue:
         self.btn_nouvellePartie.pack(fill='x',side = "top")
         self.btn_voirScore.pack(fill='x',side = "top")
         self.btn_quitApp.pack(fill='x',side = "top")
-        self.demanderNom(self.root)
 
     def destroy(self):
         self.btn_nouvellePartie.destroy()
@@ -98,7 +88,7 @@ class JeuVue:
         Args:
             temp(String(format)) : le score de la partie
         """
-        self.canvas.itemconfig(self.idScore, text = "votre score est de : " + score  ) 
+        self.canvas.itemconfig(self.idScore, text = "Score : " + score  ) 
 
     def setVie(self,vie) :
         """ change le champ vie
@@ -106,7 +96,7 @@ class JeuVue:
         Args:
             temp(String(format)) : les point de vie du vaisseau
         """
-        self.canvas.itemconfig(self.idVIe, text = "votre vie est de : "  + vie + "%" )
+        self.canvas.itemconfig(self.idVIe, text = "Vie : "  + vie + "%" )
 
     def drawObjet(self, objet):
         """Permet de dessiner tous les objet ayant un sprite valide(une image)
@@ -122,4 +112,15 @@ class JeuVue:
     def updateObjet(self, objet, x, y):
         self.canvas.move(objet.id, x, y)
         self.canvas.update()
+
+    def demanderNom(self,root) :
+        """ demande le nom de l'utulisateur dans un pop up
+
+        Args: 
+            root (tk.Widjet) : Widget parent de notre boucle
+
+        Returns:
+            String: le nom choisi        
+        """
+        return simpledialog.askstring("Input", "Quel est votre nom", parent=root)
     
