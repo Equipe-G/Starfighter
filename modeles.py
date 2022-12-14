@@ -110,10 +110,8 @@ class PowerUp(objetVolant):
     """Cette classe est la parente de tout powerup (Herite de Cercle de c31Geometry2)
     
     Attributes:
-        origine(Vecteur): position de l'objet
-        rayon(int): rayon du cercle
-        imageTk(): image representant l'objet
-        vitesse(int): vitesse de mouvement du powerup
+        Ceux de la superclasse ObjetVolant
+        power(int): type de powerup
     """ 
     def __init__(self, canvas, origine, power):
         """Permet de definir un objet volant 
@@ -140,7 +138,7 @@ class PowerUp(objetVolant):
         if self.power == 1:
             vaisseau.setVitesse(20)
         elif self.power == 2:
-            vaisseau.setVie(vaisseau.getVie() + 5)
+            vaisseau.setVie(vaisseau.getVie() + 15)
         elif self.power == 3:
             self.power = self.power #placeholder
         #pour en faire un avec la taille du vasseau faudrais changer petit rayon grand rayon et resize l'image
@@ -148,8 +146,6 @@ class PowerUp(objetVolant):
     def desactiverPouvoir(self, vaisseau):
         if self.power == 1:
             vaisseau.setVitesse(10)
-        elif self.power == 2:
-            self.power = self.power #placeholder
         elif self.power == 3:
             self.power = self.power #placeholder
     
@@ -161,17 +157,21 @@ class Projectile(objetVolant):
     
     Attributes:
         Ceux de la superclasse ObjetVolant
+        type(int): type de projectile
     """ 
-    def __init__(self, canvas, origine):
+    def __init__(self, canvas, origine, type = 1):
         """Permet de definir un projectile 
 
         Initialise super et imageTk
             Args: 
                 canvas (tk.Canvas): canvas où l'on dessine le carré
         """ 
+        self.type = type
         self.lienImage = "Image/Lazer.png"
         self.id = ""
-        super().__init__(canvas, 10, 1, 40, 40, origine, self.lienImage, 40, 40)
+        super().__init__(canvas, 10, 1, 40, 40, origine, self.lienImage, 20, 40)
+    def getType(self):
+        return self.type
         
 class Vaisseau(objetVolant):
     """Cette classe est represente le vaisseau du joueur (Herite de ObjetVolant)
@@ -188,7 +188,7 @@ class Vaisseau(objetVolant):
         """ 
         self.lienImage = "Image/Vaisseau.png"
         self.id = ""
-        super().__init__(canvas, 3, 100, 200, 200 , Vecteur(500, 900), self.lienImage, 200, 200)
+        super().__init__(canvas, 3, 100, 200, 200 , Vecteur(500, 900), self.lienImage, 160, 200)
 
 class Ovni(objetVolant):
     """Cette classe est represente un ovni ennemi (Herite de ObjetVolant)
@@ -207,7 +207,7 @@ class Ovni(objetVolant):
         self.maxY = maxY
         self.lienImage = "Image/Alien.png"
         self.id = ""
-        super().__init__(canvas, 1, 10, taille, taille, origine, self.lienImage, taille, taille)
+        super().__init__(canvas, 1, 25, taille, taille, origine, self.lienImage, taille/1.5, taille/1.5)
         
     def getMaxY(self):
         """Permet de récupérer le maxY de l'ovni
@@ -245,7 +245,7 @@ class Asteroides(objetVolant):
         """ 
         self.lienImage = "Image/asteroide.png"
         self.id = "" 
-        super().__init__(canvas, 3, 1, 100, 100, origine, self.lienImage, 100, 100)
+        super().__init__(canvas, 3, 10, 80, 80, origine, self.lienImage, 80, 80)
 
 class Background:
     """Cette classe est represente l'arriere plan
