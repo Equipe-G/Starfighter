@@ -166,12 +166,31 @@ class JeuControleur:
         #self.sauverScore()
 
     def verifierCollision(self):
-        vaisseauX = self.vaisseau.getOrigine().x
-        vaisseauY = self.vaisseau.getOrigine().y
+        vertex = [] #du vaisseau
+        vertex.append(Vecteur(self.vaisseau.getOrigine().x - self.vaisseau.petitRayon/2, self.vaisseau.getOrigine().y - self.vaisseau.petitRayon/2)) #haut-gauche
+        vertex.append(Vecteur(self.vaisseau.getOrigine().x + self.vaisseau.petitRayon/2, self.vaisseau.getOrigine().y - self.vaisseau.petitRayon/2)) #haut-droite
+        vertex.append(Vecteur(self.vaisseau.getOrigine().x + self.vaisseau.petitRayon/2, self.vaisseau.getOrigine().y + self.vaisseau.petitRayon/2)) #bas-droite
+        vertex.append(Vecteur(self.vaisseau.getOrigine().x - self.vaisseau.petitRayon/2, self.vaisseau.getOrigine().y + self.vaisseau.petitRayon/2)) #bas-gauche
 
-    def deplacementLogique(self, ovni, x, y):
-        #! Deplacement logique des ovnis ici!
-        return True
+        for o in self.ovnis :
+            vertexOvni = []
+            vertexOvni.append(Vecteur(o.getOrigine().x - o.petitRayon/2, o.getOrigine().y - o.petitRayon/2)) #vertex haut-gauche
+            vertexOvni.append(Vecteur(o.getOrigine().x + o.petitRayon/2, o.getOrigine().y + o.petitRayon/2)) #vertex bas-droit
+
+            for i in range (0,4):
+                if vertex[i].x >= vertexOvni[0].x and vertex[i].x <= vertexOvni[1].x and vertex[i].y >= vertexOvni[0].y and vertex[i].y <= vertexOvni[1].y :
+                    print("collision")
+                    return True
+        
+        for a in self.asteroide :
+            vertexAst = []
+            vertexAst.append(Vecteur(a.getOrigine().x - a.petitRayon/2, a.getOrigine().y - a.petitRayon/2)) #vertex haut-gauche
+            vertexAst.append(Vecteur(a.getOrigine().x + a.petitRayon/2, a.getOrigine().y + a.petitRayon/2)) #vertex bas-droit
+
+            for i in range (0,4):
+                if vertex[i].x >= vertexAst[0].x and vertex[i].x <= vertexAst[1].x and vertex[i].y >= vertexAst[0].y and vertex[i].y <= vertexAst[1].y :
+                    print("collision")
+                    return True
 
     def deplacementLogiqueVaisseau(self, x, y):
         """Verifie le type de mouvement necessaire par le vaisseau puis appelle deplacementVaisseau
@@ -227,8 +246,8 @@ class JeuControleur:
             a = bougeDistance
             b = 0
         elif distance == 9:
-            a = bougeDistance
-            b = bougeDistance
+            a = 0
+            b = 0
         deplacement = Vecteur(x, y)
         self.vaisseau.translateTo(deplacement)
         self.vaisseau.modificationPos(deplacement)
