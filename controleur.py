@@ -153,6 +153,8 @@ class JeuControleur:
             self.deplacementAsteroide()
             self.deplacementOvni()
             self.deplacementPowerUp()
+            self.ramasserPowerUp()
+            #self.verifierCollision()
         else:
             self.terminerPartie()
 
@@ -178,7 +180,7 @@ class JeuControleur:
             vertexOvni.append(Vecteur(o.getOrigine().x - o.petitRayon/2, o.getOrigine().y - o.petitRayon/2)) #vertex haut-gauche
             vertexOvni.append(Vecteur(o.getOrigine().x + o.petitRayon/2, o.getOrigine().y + o.petitRayon/2)) #vertex bas-droit
 
-            for i in range (0,4):
+            for i in range (0, 4):
                 if vertex[i].x >= vertexOvni[0].x and vertex[i].x <= vertexOvni[1].x and vertex[i].y >= vertexOvni[0].y and vertex[i].y <= vertexOvni[1].y :
                     print("collision")
                     return True
@@ -250,7 +252,7 @@ class JeuControleur:
             a = 0
             b = 0
         deplacement = Vecteur(x, y)
-        #self.vaisseau.translateTo(deplacement)
+        self.vaisseau.translateTo(deplacement)
         self.vaisseau.modificationPos(deplacement)
         self.vue.updateObjet(self.vaisseau, a, b)
 
@@ -261,11 +263,11 @@ class JeuControleur:
         y = self.vaisseau.getOrigine().y
         deplacement = Vecteur(self.vaisseau.getOrigine().x, y)
         self.projectile.translateTo(deplacement)
-        #self.projectile.modificationPos(deplacement)
+        self.projectile.modificationPos(deplacement)
         self.vue.drawObjet(self.projectile)
         for i in range(y):
             deplacement = Vecteur(self.vaisseau.getOrigine().x, y)
-            #self.projectile.translateTo(deplacement)
+            self.projectile.translateTo(deplacement)
             self.projectile.modificationPos(deplacement)
             self.vue.updateObjet(self.projectile, 0, -1.5)
 
@@ -278,7 +280,7 @@ class JeuControleur:
 
             powerUp = PowerUp(self.canvasJeu, affichage, power)
             self.powerUps.append(powerUp)
-            #powerUp.translateTo(affichage)
+            powerUp.translateTo(affichage)
             powerUp.modificationPos(affichage)
             self.vue.drawObjet(powerUp)
 
@@ -288,7 +290,7 @@ class JeuControleur:
             pos = Vecteur(x, -20)
             newOvni = Ovni(self.canvasJeu, pos, random.randint(15, 295))
             self.ovnis.append(newOvni)            
-            #newOvni.translateTo(pos)
+            newOvni.translateTo(pos)
             newOvni.modificationPos(pos)
             self.vue.drawObjet(newOvni)
 
@@ -298,7 +300,7 @@ class JeuControleur:
             pos = Vecteur(x, -20)
             newAsteroide = Asteroides(self.canvasJeu, pos)
             self.asteroide.append(newAsteroide)
-            #newAsteroide.translateTo(pos)
+            newAsteroide.translateTo(pos)
             newAsteroide.modificationPos(pos)
             self.vue.drawObjet(newAsteroide)
 
@@ -307,7 +309,7 @@ class JeuControleur:
         """
         for p in self.powerUps:
             newPos = Vecteur(p.getOrigine().x, p.getOrigine().y + 1)
-            #p.translateTo(newPos)
+            p.translateTo(newPos)
             p.modificationPos(newPos)
             self.vue.updateObjet(p, 0, 2)
             
@@ -338,6 +340,14 @@ class JeuControleur:
             
             if o.getOrigine().y >= 1000:
                 self.ovnis.remove(o)
+
+    def ramasserPowerUp(self):
+        """Verifie si le vaisseau a ramasser un powerUp
+        """
+        for p in self.powerUps:
+            if self.vaisseau.getOrigine().x + 10 >= p.getOrigine().x and self.vaisseau.getOrigine().x <= p.getOrigine().x + 10 and self.vaisseau.getOrigine().y + 10 >= p.getOrigine().y and self.vaisseau.getOrigine().y <= p.getOrigine().y + 10:
+                self.powerUps.remove(p)
+                print("PowerUp ramasse")
 
     def sauverScore(self):
         """Permet d'ajouter les informations de cette session dans le fichier csv
