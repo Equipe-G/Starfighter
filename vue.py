@@ -27,13 +27,25 @@ class MenuVue:
         self.btn_voirScore = tk.Button(root, text='Meilleur score',
                                             command=voirScore)
 
+    def demanderNom(self,root) :
+        """ demande le nom de l'utulisateur dans un pop up
+
+        Args: 
+            root (tk.Widjet) : Widget parent de notre boucle
+
+        Returns:
+            String: le nom choisi        
+        """
+        return simpledialog.askstring("Input", "Quel est votre nom", parent=root)
+
     def draw(self):
         """ dessine le menu graphique et tout les boutons
         """
         self.frame.pack()
         self.btn_nouvellePartie.pack(fill='x',side = "top")
         self.btn_voirScore.pack(fill='x',side = "top")
-        self.btn_quitApp.pack(fill='x',side = "top") 
+        self.btn_quitApp.pack(fill='x',side = "top")
+        self.demanderNom(self.root)
 
     def destroy(self):
         self.btn_nouvellePartie.destroy()
@@ -50,23 +62,17 @@ class JeuVue:
         :type  root: tk.Widget
         """
         self.root = root
-        self.nom = "" # a aller chercher au debut de la partie et save
-        self.score = "" # a changer tout au long de la partie et a save a la fin 
-        self.vie = "" # a changer tout au long de la partie
         self.canvas = tk.Canvas(root, width=1000, height=1000, bg='white')
-        #self.nom.grid()
-        #self.vie.grid()
-        #self.score.grid()
+        self.idVIe = ""
+        self.idScore = ""
 
     def drawEspaceJeu(self):
         self.canvas.pack()
-        self.canvas.create_text(0,0,text=self.nom, font=("Helvetica")) #voir les coordonnées
-        self.canvas.create_text(200,0,text=self.score,font=("Helvetica")) # voir les coordonnées
-        self.canvas.create_text(250,0,text=self.vie,font=("Helvetica")) # voir les coordonnées
 
     def drawFond(self,fond):
         self.canvas.create_image(0,0,image=fond, anchor="nw")
-
+        self.idVIe =self.canvas.create_text(800,50,text="",fill="red", font=("Helvetica",20))
+        self.idScore = self.canvas.create_text(200,50,text="",fill="green", font=("Helvetica",20))
     def destroy(self, canvas):
         """ ferme l'espace de jeu
         """
@@ -85,14 +91,6 @@ class JeuVue:
         """ 
         self.root.bind(eventName, command)
 
-    def setNom(self,nom) :
-        """ change la valeur du champ nom
-
-        Args:
-            nom (String) : le nom du joueur chosi  
-        """
-        self.nom = "Nom du joueur : " + nom 
-
 
     def setScore(self,score) :
         """ change le champ score
@@ -100,7 +98,7 @@ class JeuVue:
         Args:
             temp(String(format)) : le score de la partie
         """
-        self.score = "score: " + str(score)
+        self.canvas.itemconfig(self.idScore, text = "votre score est de : " + score  ) 
 
     def setVie(self,vie) :
         """ change le champ vie
@@ -108,18 +106,7 @@ class JeuVue:
         Args:
             temp(String(format)) : les point de vie du vaisseau
         """
-        self.vie = "Point de vie : " + str(vie) +"%"
-
-    def demanderNom(self,root) :
-        """ demande le nom de l'utulisateur dans un pop up
-
-        Args: 
-            root (tk.Widjet) : Widget parent de notre boucle
-
-        Returns:
-            String: le nom choisi        
-        """
-        return simpledialog.askstring("Input", "Quel est votre nom", parent=root)
+        self.canvas.itemconfig(self.idVIe, text = "votre vie est de : "  + vie + "%" )
 
     def drawObjet(self, objet):
         """Permet de dessiner tous les objet ayant un sprite valide(une image)
