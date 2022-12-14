@@ -111,6 +111,8 @@ class JeuControleur:
         self.ovnis = []
         self.asteroide = []
         self.powerUps = []
+        self.vue.setScore("200")
+        self.vue.setVie("100")
    
         self.__defineEvent()
 
