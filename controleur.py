@@ -105,11 +105,12 @@ class JeuControleur:
         self.vaisseau = Vaisseau(self.canvasJeu)
         self.vue.drawObjet(self.vaisseau)
         self.projectile = Projectile(self.canvasJeu, self.vaisseau.getOrigine())
-        self.powerUp = 0
         self.asteroideSpawnRate = 1
         self.ovnisSpawnRate = 3
+        self.powerUpSpawnRate = 2
         self.ovnis = []
         self.asteroide = []
+        self.powerUps = []
    
         self.__defineEvent()
 
@@ -144,12 +145,13 @@ class JeuControleur:
 
     def roulerJeu(self):
         if not self.verifierCollision():
-            self.intAsteroide()
+            self.initAsteroide()
             self.initOvnis()
             self.deplacementLogiqueVaisseau(self.x, self.y)
-            self.powerUps()
+            self.initPowerUp()
             self.deplacementAsteroide()
             self.deplacementOvni()
+            self.deplacementPowerUp()
         else:
             self.terminerPartie()
 
@@ -174,22 +176,23 @@ class JeuControleur:
     def deplacementLogiqueVaisseau(self, x, y):
         """Verifie le type de mouvement necessaire par le vaisseau puis appelle deplacementVaisseau
         """
+        vitesse = self.vaisseau.getVitesse()
         if x > self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au nord-est
-            self.deplacementVaisseau(self.vaisseau.get_origine().x + self.vaisseau.getVitesse(), self.vaisseau.get_origine().y - self.vaisseau.getVitesse(), 1)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x + vitesse, self.vaisseau.get_origine().y - vitesse, 1)
         elif x == self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au nord
-            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y - self.vaisseau.getVitesse(), 2)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y - vitesse, 2)
         elif x < self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au nord-ouest
-            self.deplacementVaisseau(self.vaisseau.get_origine().x - self.vaisseau.getVitesse(), self.vaisseau.get_origine().y - self.vaisseau.getVitesse(), 3)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x - vitesse, self.vaisseau.get_origine().y - vitesse, 3)
         elif x < self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est à l'ouest
-            self.deplacementVaisseau(self.vaisseau.get_origine().x - self.vaisseau.getVitesse(), self.vaisseau.get_origine().y, 4)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x - vitesse, self.vaisseau.get_origine().y, 4)
         elif x < self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au sud-ouest
-            self.deplacementVaisseau(self.vaisseau.get_origine().x - self.vaisseau.getVitesse(), self.vaisseau.get_origine().y + self.vaisseau.getVitesse(), 5)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x - vitesse, self.vaisseau.get_origine().y + vitesse, 5)
         elif x == self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au sud
-            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y + self.vaisseau.getVitesse(), 6)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y + vitesse, 6)
         elif x > self.vaisseau.get_origine().x and y > self.vaisseau.get_origine().y : #curseur est au sud-est
-            self.deplacementVaisseau(self.vaisseau.get_origine().x + self.vaisseau.getVitesse(), self.vaisseau.get_origine().y + self.vaisseau.getVitesse(), 7)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x + vitesse, self.vaisseau.get_origine().y + vitesse, 7)
         elif x > self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est à l'est
-            self.deplacementVaisseau(self.vaisseau.get_origine().x + self.vaisseau.getVitesse(), self.vaisseau.get_origine().y, 8)
+            self.deplacementVaisseau(self.vaisseau.get_origine().x + vitesse, self.vaisseau.get_origine().y, 8)
         elif x == self.vaisseau.get_origine().x and y == self.vaisseau.get_origine().y : #curseur est sur l'origine du vaisseau            
             self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y, 9)
                     
@@ -244,31 +247,52 @@ class JeuControleur:
             deplacement = Vecteur(self.vaisseau.getOrigine().x, y)
             self.projectile.translateTo(deplacement)
             self.projectile.modificationPos(deplacement)
-            self.vue.updateObjet(self.projectile, 0, -1)
+            self.vue.updateObjet(self.projectile, 0, -1.5)
 
-    def powerUps(self):
-        if self.i <= 100:
-            self.i += 1
-        else:
-            print("powerUps")
-            x = random.randint(200, 700)
-            y = random.randint(100, 800)
+    def initPowerUp(self):
+        if random.randint(0, 1000) <= self.powerUpSpawnRate:
+            x = random.randint(50, 950)
+            y = -10
             power = random.randint(1, 3)
             affichage = Vecteur(x, y)
 
-            self.powerUp = PowerUp(self.canvasJeu, affichage, power)
-            self.powerUp.translateTo(affichage)
-            self.powerUp.modificationPos(affichage)
-            self.vue.drawObjet(self.powerUp)
-            self.i = 0
+            powerUp = PowerUp(self.canvasJeu, affichage, power)
+            self.powerUps.append(powerUp)
+            powerUp.translateTo(affichage)
+            powerUp.modificationPos(affichage)
+            self.vue.drawObjet(powerUp)
 
     def initOvnis(self):
-        if(random.randint(0,1000) <= self.ovnisSpawnRate):
-            self.ovnis.append(Ovni(self.canvasJeu, Vecteur(random.randint(50, 900), - 20), random.randint(15, 295)))
+        if(random.randint(0, 1000) <= self.ovnisSpawnRate):
+            x = random.randint(50, 900)
+            pos = Vecteur(x, -20)
+            newOvni = Ovni(self.canvasJeu, pos, random.randint(15, 295))
+            self.ovnis.append(newOvni)            
+            newOvni.translateTo(pos)
+            newOvni.modificationPos(pos)
+            self.vue.drawObjet(newOvni)
 
-    def intAsteroide(self):
-        if(random.randint(0,1000) <= self.asteroideSpawnRate):
-            self.asteroide.append(Asteroides(self.canvasJeu, Vecteur(random.randint(50, 900), - 20)))
+    def initAsteroide(self):
+        if(random.randint(0, 1000) <= self.asteroideSpawnRate):
+            x = random.randint(50, 900)
+            pos = Vecteur(x, -20)
+            newAsteroide = Asteroides(self.canvasJeu, pos)
+            self.asteroide.append(newAsteroide)
+            newAsteroide.translateTo(pos)
+            newAsteroide.modificationPos(pos)
+            self.vue.drawObjet(newAsteroide)
+
+    def deplacementPowerUp(self):
+        """Deplace les powerUps
+        """
+        for p in self.powerUps:
+            newPos = Vecteur(p.getOrigine().x, p.getOrigine().y + 1)
+            p.translateTo(newPos)
+            p.modificationPos(newPos)
+            self.vue.updateObjet(p, 0, 2)
+            
+            if p.getOrigine().y >= 1000:
+                self.powerUps.remove(p)
 
     def deplacementAsteroide(self):
         """Deplace les asteroides vers le bas de la page
@@ -277,17 +301,23 @@ class JeuControleur:
             newPos = Vecteur(a.getOrigine().x, a.getOrigine().y + 1)
             a.translateTo(newPos)
             a.modificationPos(newPos)
-            self.vue.drawObjet(a)
+            self.vue.updateObjet(a, 0, 3)
+            
+            if a.getOrigine().y >= 1000:
+                self.asteroide.remove(a)
 
     def deplacementOvni(self):
         """Deplace les ovnis
             //a completer
         """
         for o in self.ovnis:
-            newPos = Vecteur(o.getOrigine().x, o.getOrigine().y+1)
+            newPos = Vecteur(o.getOrigine().x, o.getOrigine().y + 1)
             o.translateTo(newPos)
             o.modificationPos(newPos)
-            self.vue.drawObjet(o)
+            self.vue.updateObjet(o, 0, 1)
+            
+            if o.getOrigine().y >= 1000:
+                self.ovnis.remove(o)
 
     def sauverScore(self):
         """Permet d'ajouter les informations de cette session dans le fichier csv
