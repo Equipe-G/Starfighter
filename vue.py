@@ -39,6 +39,7 @@ class MenuVue:
         self.btn_quitApp.pack(fill='x',side = "top")
 
     def destroy(self):
+        """ Efface le menu et les boutons"""
         self.btn_nouvellePartie.destroy()
         self.btn_quitApp.destroy()
         self.btn_voirScore.destroy()
@@ -57,9 +58,16 @@ class JeuVue:
         self.idScore = ""
 
     def drawEspaceJeu(self):
+        """ crée le canvas de jeu (espace de jeu)
+        """
         self.canvas.pack()
 
     def drawFond(self,fond):
+        """ affiche le fond du jeu et crée les id des champ pour vie/score
+
+        Args:
+            fond : le fichier de l'image 
+        """
         self.canvas.create_image(0,0,image=fond, anchor="nw")
         self.idVIe =self.canvas.create_text(800,50,text="",fill="red", font=("Helvetica",20))
         self.idScore = self.canvas.create_text(200,50,text="",fill="green", font=("Helvetica",20))
@@ -69,6 +77,8 @@ class JeuVue:
         canvas.destroy()
         
     def getCanvas(self):
+        """ retourne le canvas
+        """
         return self.canvas
 
     def setListen(self, eventName, command) :
@@ -102,6 +112,10 @@ class JeuVue:
 
     def drawObjet(self, objet):
         """Permet de dessiner tous les objet ayant un sprite valide(une image)
+
+        Args: 
+            objet : un objet du jeu qui ce déplace
+
         """
         if hasattr(objet, 'id'):
             self.canvas.delete(objet.id)
@@ -112,6 +126,13 @@ class JeuVue:
 
     
     def updateObjet(self, objet, x, y):
+        """ deplace l'objet gaphiquement 
+
+        Args: 
+            objet : un objet du jeu qui ce déplace
+            x,y : les valeur de déplacement en x et en y
+        
+        """
         self.canvas.move(objet.id, x, y)
         self.canvas.update()
 
