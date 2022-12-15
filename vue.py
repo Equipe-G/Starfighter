@@ -30,8 +30,7 @@ class MenuVue:
     
 
     def draw(self):
-        """ dessine le menu graphique et tout les boutons
-        """
+        """ dessine le menu graphique et tout les boutons"""
         self.frame.pack()
         self.btn_nouvellePartie.pack(fill='x',side = "top")
         self.btn_voirScore.pack(fill='x',side = "top")
@@ -44,8 +43,7 @@ class MenuVue:
         self.frame.destroy()
 
 class JeuVue:
-    """ cette classe permet de définir l'aparence de l'espace de jeu
-    """
+    """ cette classe permet de définir l'aparence de l'espace de jeu"""
     def __init__(self, root): #! Mettre imgFond en parametre
         """
         :param root: Widget parent de notre boucle
