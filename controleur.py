@@ -110,6 +110,8 @@ class JeuControleur:
         self.ovnis = []
         self.asteroide = []
         self.powerUps = []  
+        self.projectiles = []
+        self.projectilesOvnis = []
         self.__defineEvent()
 
     def demarrerPartie(self):
@@ -122,7 +124,7 @@ class JeuControleur:
 
     def buttonReleased(self, event):
         #self.released = True
-        self.tirerProjectile()
+        self.initProjectile()
 
     def isMoving(self, event):
         self.moving = True
@@ -147,12 +149,15 @@ class JeuControleur:
             self.initAsteroide()
             self.initOvnis()
             self.deplacementLogiqueVaisseau(self.x, self.y)
+            self.tirerProjectile()
             self.initPowerUp()
             self.deplacementAsteroide()
             self.deplacementOvni()
+            self.tirOvni()
             self.deplacementPowerUp()
             self.ramasserPowerUp()
             self.verifierCollision()
+            self.collisionProjectile()
             self.vue.setScore(self.partie.getScore())
             self.vue.setVie(self.vaisseau.getVie())
         else:
@@ -274,20 +279,36 @@ class JeuControleur:
         self.vaisseau.modificationPos(deplacement)
         self.vue.updateObjet(self.vaisseau, a, b)
 
+    def initProjectile(self):
+        newProjectile = Projectile(self.canvasJeu,self.vaisseau.getOrigine(),self.typeArme)
+        self.projectiles.append(newProjectile)
+        self.vue.drawObjet(newProjectile)
+
     def tirerProjectile(self):
         """Tire un projectile
         """
-        y = self.vaisseau.getOrigine().y
-        deplacement = Vecteur(self.vaisseau.getOrigine().x, y)
-        self.projectile.translateTo(deplacement)
-        self.projectile.modificationPos(deplacement)
-        self.vue.drawObjet(self.projectile)
-        for i in range(y):
-            deplacement = Vecteur(self.vaisseau.getOrigine().x, y)
-            self.projectile.translateTo(deplacement)
-            self.projectile.modificationPos(deplacement)
-            self.vue.updateObjet(self.projectile, 0, -1.5)
-            self.collisionProjectile(y)
+        for p in self.projectiles:
+            newPos = Vecteur(p.getOrigine().x, p.getOrigine().y - 8)
+            p.translateTo(newPos)
+            p.modificationPos(newPos)
+            self.vue.updateObjet(p, 0, -8)
+
+            if p.getOrigine().y <= 0:
+                self.projectiles.remove(p)
+            print(p.getOrigine().y)
+
+        # y = self.vaisseau.getOrigine().y
+        # deplacement = Vecteur(self.vaisseau.getOrigine().x, self.vaisseau.getOrigine().y-1.5)
+        # self.projectile.translateTo(deplacement)
+        # self.projectile.modificationPos(deplacement)
+        # self.vue.drawObjet(self.projectile)
+        # for i in range(y):
+        #     deplacement = Vecteur(self.vaisseau.getOrigine().x, self.vaisseau.getOrigine().y-1.5)
+        #     self.projectile.translateTo(deplacement)
+        #     self.projectile.modificationPos(deplacement)
+        #     self.vue.updateObjet(self.projectile, 0, -1.5)
+        #     self.collisionProjectile(y)
+        #     print(self.projectile.getOrigine().y)
 
     def initPowerUp(self):
         if random.randint(0, 1000) <= self.powerUpSpawnRate:
@@ -360,6 +381,27 @@ class JeuControleur:
             if o.getOrigine().y >= 1000:
                 self.ovnis.remove(o)
 
+    def tirOvni(self):
+        for o in self.ovnis:
+            if random.randint(0,100) <= 1 :
+                newProjectile = Projectile(self.canvasJeu, o.getOrigine(),self.typeArme)
+                self.vue.drawObjet(newProjectile)
+                self.projectilesOvnis.append(newProjectile)
+
+        for p in self.projectilesOvnis:
+            newPos = Vecteur(p.getOrigine().x, p.getOrigine().y + 8)
+            p.translateTo(newPos)
+            p.modificationPos(newPos)
+            self.vue.updateObjet(p, 0, 8)
+
+            if p.getOrigine().x >= self.vaisseau.getOrigine().x - 50 and p.getOrigine().x <= self.vaisseau.getOrigine().x +50: #si la balle se trouve dans la colonne du vaisseau
+                if p.getOrigine().y >= self.vaisseau.getOrigine().y -50 and p.getOrigine().y <= self.vaisseau.getOrigine().y +50: #si la balle se trouve sur le vaisseau (colonne + rangée)
+                    self.vaisseau.setVie(self.vaisseau.getVie() - 10)
+                    self.projectilesOvnis.remove(p)
+
+            if p.getOrigine().y >= 1000:
+                self.projectilesOvnis.remove(p)
+
     def ramasserPowerUp(self):
         """Verifie si le vaisseau a ramasser un powerUp
         """
@@ -371,26 +413,43 @@ class JeuControleur:
                             p.activerPouvoir(self.vaisseau, self.projectile)
                             self.powerUps.remove(p)
 
-    def collisionProjectile(self, y):
+    def collisionProjectile(self):
         """Verifie si le projectile a touché un objet
         """
         for o in self.ovnis:
-            if self.projectile.getOrigine().x + 50 >= o.getOrigine().x:
-                if self.projectile.getOrigine().x <= o.getOrigine().x + 50:
-                    if self.vaisseau.getOrigine().y + 900 >= o.getOrigine().y:
-                        if self.vaisseau.getOrigine().y <= o.getOrigine().y + 900:
-                            o.enleverVie(10)
-                            self.partie.addScore()
-                            if o.getVie() <= 0:
-                                self.ovnis.remove(o)
+            for p in self.projectiles:
+                if p.getOrigine().x >= o.getOrigine().x - 30 and p.getOrigine().x <= o.getOrigine().x +30: #si projectile est dans la colonne de l'ovni
+                    if p.getOrigine().y >= o.getOrigine().y - 30 and p.getOrigine().y <= o.getOrigine().y +30: #si projectile est sur l'ovni (car même colonne et même rangée)
+                        o.enleverVie(10)
+                        self.partie.addScore()
+                        self.projectiles.remove(p)
+                        if o.getVie() <= 0:
+                            self.ovnis.remove(o)
+
+            # if self.projectile.getOrigine().x + 50 >= o.getOrigine().x:
+            #     if self.projectile.getOrigine().x <= o.getOrigine().x + 50:
+            #         if self.vaisseau.getOrigine().y + 900 >= o.getOrigine().y:
+            #             if self.vaisseau.getOrigine().y <= o.getOrigine().y + 900:
+            #                 o.enleverVie(10)
+            #                 self.partie.addScore()
+            #                 if o.getVie() <= 0:
+            #                     self.ovnis.remove(o)
         for a in self.asteroide:
-            if self.projectile.getOrigine().x + 50 >= a.getOrigine().x:
-                if self.projectile.getOrigine().x <= a.getOrigine().x + 50:
-                    if self.vaisseau.getOrigine().y + 900 >= a.getOrigine().y:
-                        if self.vaisseau.getOrigine().y <= a.getOrigine().y + 900:
-                            a.enleverVie(5)
-                            if a.getVie() <= 0:
-                                self.asteroide.remove(a)
+            if self.projectile.getOrigine().x >= a.getOrigine().x - 30 and self.projectile.getOrigine().x <= a.getOrigine().x +30: #si projectile est dans la colonne de l'ovni
+                if self.projectile.getOrigine().y >= a.getOrigine().y - 30 and self.projectile.getOrigine().y <= a.getOrigine().y +30: #si projectile est sur l'ovni (car même colonne et même rangée)
+                    a.enleverVie(5)
+                    self.partie.addScore()
+                    if a.getVie() <= 0:
+                        self.ovnis.remove(o)
+
+
+            # if self.projectile.getOrigine().x + 50 >= a.getOrigine().x:
+            #     if self.projectile.getOrigine().x <= a.getOrigine().x + 50:
+            #         if self.vaisseau.getOrigine().y + 900 >= a.getOrigine().y:
+            #             if self.vaisseau.getOrigine().y <= a.getOrigine().y + 900:
+            #                 a.enleverVie(5)
+            #                 if a.getVie() <= 0:
+            #                     self.asteroide.remove(a)
 
     def sauverScore(self):
         """Permet d'ajouter les informations de cette session dans le fichier csv
