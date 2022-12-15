@@ -133,9 +133,7 @@ class JeuControleur:
             self.debuter()
 
     def debuter(self):
-        """Debute la partie actuelle
-            Commence la boucle de jeu
-        """
+        """Debute la partie actuelle et commence la boucle de jeu"""
         self.partieEnCours = True
         if self.partieEnCours:
             self.e = LoopEvent(self.vue.root, self.roulerJeu, 15)
@@ -187,7 +185,11 @@ class JeuControleur:
                             self.asteroide.remove(a)
                         
     def deplacementLogiqueVaisseau(self, x, y):
-        """Verifie le type de mouvement necessaire par le vaisseau puis appelle deplacementVaisseau"""
+        """Verifie le type de mouvement necessaire par le vaisseau puis appelle deplacementVaisseau
+            Args: 
+                x (Int): x de la position future
+                y (Int): y de la position future
+        """
         vitesse = self.vaisseau.getVitesse()
         if x > self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au nord-est
             self.deplacementVaisseau(self.vaisseau.get_origine().x + vitesse, self.vaisseau.get_origine().y - vitesse, 1)
@@ -209,7 +211,12 @@ class JeuControleur:
             self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y, 9)
                     
     def deplacementVaisseau(self, x, y, distance):
-        """Deplace le vaisseau vers la position de la souris"""
+        """Deplace le vaisseau vers la position de la souris
+                Args: 
+                x (Int): x de la position future
+                y (Int): y de la position future
+                distance (Int): disctance entre la position actuelle et celle voulue
+        """
         bougeDistance = self.vaisseau.getVitesse()
         a = 0
         b = 0
@@ -246,6 +253,7 @@ class JeuControleur:
         self.vue.updateObjet(self.vaisseau, a, b)
 
     def initProjectile(self):
+        """Crée un projectile"""
         newProjectile = Projectile(self.canvasJeu,self.vaisseau.getOrigine(),self.typeArmeVaisseau)
         self.projectiles.append(newProjectile)
         self.vue.drawObjet(newProjectile)
@@ -336,6 +344,7 @@ class JeuControleur:
                 self.ovnis.remove(o)
 
     def tirOvni(self):
+        """As une chance qu'un ovni tire un prjectile"""
         for o in self.ovnis:
             if random.randint(0,100) <= 1 :
                 newProjectile = Projectile(self.canvasJeu, o.getOrigine(),self.typeArmeOvni)
@@ -357,7 +366,7 @@ class JeuControleur:
                 self.projectilesOvnis.remove(p)
 
     def ramasserPowerUp(self):
-        """Verifie si le vaisseau a ramasser un powerUp"""
+        """Verifie si le vaisseau ramasse un powerUp"""
         for p in self.powerUps:
             if self.vaisseau.getOrigine().x + 130 >= p.getOrigine().x:
                 if self.vaisseau.getOrigine().x <= p.getOrigine().x + 130:

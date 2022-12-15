@@ -43,76 +43,80 @@ class objetVolant(Oval):
         self.imageTk = ImageTk.PhotoImage(self.image)
 
     def enleverVie(self, degats):
+        """"Enleve des vies
+            Args:
+                degats (Int): Nombre de degats pris
+        """
         self.setVie(self.getVie() - degats)
 
     def getOrigine(self) -> Vecteur:
         """Permet de récupérer l'origine de l'objet
-        Returns:
-            int: position de l'objet
+            Returns:
+                int: position de l'objet
         """
         return super().get_position()
 
     def modificationPos(self, position: Vecteur):
         """Définit l'origine de l'objet et le deplace
-        Args:
-            position (Vecteur): Nouvelle position de l'objet
+            Args:
+                position (Vecteur): Nouvelle position de l'objet
         """
         self.origine = position
         super().translateTo(position)
 
     def getVitesse(self):
         """Permet de récupérer la vitesse de l'objet
-        Returns:
-            int: vitesse de mouvement de l'objet
+            Returns:
+                int: vitesse de mouvement de l'objet
         """
         return self.vitesse
 
     def setVitesse(self, vitesse):
         """Change la vitesse de l'objet
-        Args:
-            petitRayon (int): nouvelle vitesse de mouvement de l'objet
+            Args:
+                petitRayon (int): nouvelle vitesse de mouvement de l'objet
         """
         self.vitesse = vitesse
 
     def getVie(self):
         """Permet de récupérer la vie de l'objet
-        Returns:
-            int: vie de l'objet
+            Returns:
+                int: vie de l'objet
         """
         return self.vie
 
     def setVie(self, vie):
         """Change la vie de l'objet
-        Args:
-            petitRayon (int): nouvelle vie de l'objet
+            Args:
+                petitRayon (int): nouvelle vie de l'objet
         """
         self.vie = vie
 
     def getPetitRayon(self):
         """Permet de récupérer le petit rayon de l'objet
-        Returns:
-            int: petit rayon de l'objet
+            Returns:
+                int: petit rayon de l'objet
         """
         return self.petitRayon
 
     def setPetitRayon(self, petitRayon):
         """Change le petit rayon de l'objet
-        Args:
-            petitRayon (int): nouvelle petit rayon de l'objet
+            Args:
+                petitRayon (int): nouvelle petit rayon de l'objet
         """
         self.petitRayon = petitRayon
 
     def getGrandRayon(self):
         """Permet de récupérer le grand rayon de l'objet
-        Returns:
-            int: grand rayon de l'objet
+            Returns:
+                int: grand rayon de l'objet
         """
         return self.grandRayon
 
     def setGrandRayon(self, grandRayon):
         """Change le grand rayon de l'objet
-        Args:
-            grandRayon (int): nouvelle grand rayon de l'objet
+            Args:
+                grandRayon (int): nouvelle grand rayon de l'objet
         """
         self.grandRayon = grandRayon
         
@@ -145,7 +149,10 @@ class PowerUp(objetVolant):
         super().__init__(canvas, 0, 1, 30, 45, origine, self.lienImage, 30, 45)
 
     def activerPouvoir(self, vaisseau):
-        """Active le powerup"""
+        """Active le powerup
+            Args:
+                vaisseau (Vaisseau): vaisseau du joueur
+        """
         if self.power == 1:
             vaisseau.setVitesse(8)
             return 1
@@ -156,7 +163,10 @@ class PowerUp(objetVolant):
            return 2
 
     def desactiverPouvoir(self, vaisseau):
-        """Desactive le powerup"""
+        """Desactive le powerup
+            Args:
+                vaisseau (Vaisseau): vaisseau du joueur
+        """
         vaisseau.setVitesse(4)
         return 1
 
@@ -173,6 +183,8 @@ class Projectile(objetVolant):
         Initialise super, imageTk et type
             Args: 
                 canvas (tk.Canvas): canvas où l'on dessine le carré
+                origine(Vecteur): position de l'objet
+                type(int): type de projectile
         """ 
         self.type = type
         self.lienImage = "Image/Lazer.png"
@@ -209,6 +221,9 @@ class Ovni(objetVolant):
         Initialise super et imageTk
             Args: 
                 canvas (tk.Canvas): canvas où l'on dessine le carré
+                origine(Vecteur): position de l'objet
+                maxY(int): le plus haut que l'ovni peut aller
+                taille(int): taille de l'ovni
         """ 
         self.maxY = maxY
         if(taille == 80):
@@ -220,8 +235,8 @@ class Ovni(objetVolant):
         
     def getMaxY(self):
         """Permet de récupérer le maxY de l'ovni
-        Returns:
-            int: le plus haut que l'ovni peut aller
+            Returns:
+                int: le plus haut que l'ovni peut aller
         """
         return self.maxY
 
@@ -237,6 +252,8 @@ class Boss(Ovni):
         Initialise super et imageTk
             Args: 
                 canvas (tk.Canvas): canvas où l'on dessine le carré
+                origine(Vecteur): position de l'objet
+                maxY(int): le plus haut que l'ovni peut aller
         """ 
         super().__init__(canvas, origine, maxY, 300)
 
@@ -252,6 +269,7 @@ class Asteroides(objetVolant):
         Initialise super et imageTk
             Args: 
                 canvas (tk.Canvas): canvas où l'on dessine le carré
+                origine(Vecteur): position de l'objet
         """ 
         self.lienImage = "Image/asteroide.png"
         self.id = "" 
@@ -264,6 +282,7 @@ class Background:
         imageTk: image de l'arriere plan
     """ 
     def __init__(self):
+        """Initialise l'image d'arriere plan"""
         self.imageBase = Image.open("Image/background.gif")
         self.image = self.imageBase.resize((1000,1000), Image.ANTIALIAS)
         self.imageTk = ImageTk.PhotoImage(self.image)
@@ -277,34 +296,40 @@ class Partie:
     """
     def __init__(self, nom):
         """Permet de definir la partie
-            Initialise tempsDebut
+
+        Initialise tempsDebut
+            Args: 
+                nom (String): nom du joueur
         """
         self.score = 0
         self.nomJoueur = nom
         self.tempsDebut = time.time()
 
     def addScore(self, score):
-        """Permet d'augenter le score de cette partie"""
+        """Permet d'augenter le score de cette partie
+            Args: 
+                    score (Int): nombre de points ajoutés
+        """
         self.score += score
         
     def getNom(self):
         """Permet de récupérer nom du joueur cette partie
-        Returns:
-            string: nom du joueur
+            Returns:
+                string: nom du joueur
         """
         return self.nomJoueur
     
     def getScore(self):
         """Permet de récupérer score cette partie
-        Returns:
-            string: score
+            Returns:
+                string: score
         """
         return self.score
     
     def getTemps(self):
         """Permet de récupérer le temps depuis le debut de la partie
-        Returns:
-            double: temps passé depuis début de la partie
+            Returns:
+                double: temps passé depuis début de la partie
         """
         return round((time.time() - self.tempsDebut), 2)
 
