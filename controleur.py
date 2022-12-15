@@ -282,7 +282,7 @@ class JeuControleur:
         if(random.randint(0, 1000) <= self.ovnisSpawnRate):
             x = random.randint(50, 900)
             pos = Vecteur(x, -20)
-            if(random.randint(0, 100) >= 5):
+            if(random.randint(0, 100) >= 15):
                 newOvni = Ovni(self.canvasJeu, pos, random.randint(15, 295))
             else:
                 newOvni = Boss(self.canvasJeu, pos, random.randint(15, 295))
@@ -373,9 +373,12 @@ class JeuControleur:
                 if p.getOrigine().x >= o.getOrigine().x - 30 and p.getOrigine().x <= o.getOrigine().x +30: #si projectile est dans la colonne de l'ovni
                     if p.getOrigine().y >= o.getOrigine().y - 30 and p.getOrigine().y <= o.getOrigine().y +30: #si projectile est sur l'ovni (car même colonne et même rangée)
                         o.enleverVie(10)
-                        self.partie.addScore()
                         self.projectiles.remove(p)
                         if o.getVie() <= 0:
+                            if(o.lienImage == "Image/Boss.png"):
+                                self.partie.addScore(15)
+                            else:
+                                self.partie.addScore(5)
                             self.ovnis.remove(o)
 
         for a in self.asteroide:
@@ -384,8 +387,8 @@ class JeuControleur:
                     if p.getOrigine().y >= a.getOrigine().y - 30 and p.getOrigine().y <= a.getOrigine().y +30: #si projectile est sur l'ovni (car même colonne et même rangée)
                         a.enleverVie(5)
                         self.projectiles.remove(p)
-                    if a.getVie() <= 0:
-                        self.asteroide.remove(a)
+                        if a.getVie() <= 0:
+                            self.asteroide.remove(a)
 
     def sauverScore(self):
         """Permet d'ajouter les informations de cette session dans le fichier csv"""

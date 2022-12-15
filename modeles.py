@@ -283,9 +283,9 @@ class Partie:
         self.nomJoueur = nom
         self.tempsDebut = time.time()
 
-    def addScore(self):
+    def addScore(self, score):
         """Permet d'augenter le score de cette partie"""
-        self.score += 5
+        self.score += score
         
     def getNom(self):
         """Permet de récupérer nom du joueur cette partie
