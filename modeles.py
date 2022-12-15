@@ -228,7 +228,10 @@ class Ovni(objetVolant):
                 canvas (tk.Canvas): canvas où l'on dessine le carré
         """ 
         self.maxY = maxY
-        self.lienImage = "Image/Alien.png"
+        if(taille == 80):
+            self.lienImage = "Image/Alien.png"
+        else: 
+            self.lienImage = "Image/Boss.png"
         self.id = ""
         super().__init__(canvas, 1, 30, taille, taille, origine, self.lienImage, taille, taille)
         
@@ -252,7 +255,7 @@ class Boss(Ovni):
             Args: 
                 canvas (tk.Canvas): canvas où l'on dessine le carré
         """ 
-        super().__init__(canvas, origine, maxY, 160)
+        super().__init__(canvas, origine, maxY, 300)
 
 class Asteroides(objetVolant):
     """Cette classe est represente les asteroides (Herite de ObjetVolant)
