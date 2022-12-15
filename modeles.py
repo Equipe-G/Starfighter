@@ -38,6 +38,7 @@ class objetVolant(Oval):
         super().__init__(canvas, origine, self.petitRayon, self.grandRayon, "white", "white", 0)
 
     def updateImage(self):
+        """"Update la taille de l'image"""
         self.image = self.imageBase.resize((self.xImage,self.yImage), Image.ANTIALIAS)
         self.imageTk = ImageTk.PhotoImage(self.image)
 
@@ -125,7 +126,7 @@ class PowerUp(objetVolant):
     def __init__(self, canvas, origine, power):
         """Permet de definir un objet volant 
 
-        Initialise origine, rayon et imageTk
+        Initialise origine, power, rayon et imageTk
             Args: 
                 canvas (tk.Canvas): canvas où l'on dessine le carré
                 origine(Vecteur): position de l'objet
@@ -144,21 +145,18 @@ class PowerUp(objetVolant):
         super().__init__(canvas, 0, 1, 30, 45, origine, self.lienImage, 30, 45)
 
     def activerPouvoir(self, vaisseau, projectile):
+        """Active le powerup"""
         if self.power == 1:
             vaisseau.setVitesse(8)
         elif self.power == 2:
             vaisseau.setVie(vaisseau.getVie() + 15)
         elif self.power == 3:
             projectile.updateArme(2)
-        #pour en faire un avec la taille du vasseau faudrais changer petit rayon grand rayon et resize l'image
 
     def desactiverPouvoir(self, vaisseau, projectile):
+        """Desactive le powerup"""
         vaisseau.setVitesse(4)
         projectile.updateArme(1)
-
-    
-    
-
 
 class Projectile(objetVolant):
     """Cette classe est represente un projectile tire par un vaisseau ou ovni (Herite de ObjetVolant)
@@ -170,7 +168,7 @@ class Projectile(objetVolant):
     def __init__(self, canvas, origine, type):
         """Permet de definir un projectile 
 
-        Initialise super et imageTk
+        Initialise super, imageTk et type
             Args: 
                 canvas (tk.Canvas): canvas où l'on dessine le carré
         """ 
@@ -178,9 +176,19 @@ class Projectile(objetVolant):
         self.lienImage = "Image/Lazer.png"
         self.id = ""
         super().__init__(canvas, 10, 1, 40, 40, origine, self.lienImage, 20, 40)
+
     def getType(self):
+        """Permet de récupérer le types de projectile
+        Returns:
+            type: type de projectile
+        """
         return self.type
+
     def updateArme(self, type):
+        """Permet de changer la taille du projectile
+        Returns:
+            type: type de projectile
+        """
         self.type = type
         self.setGrandRayon = 40 * self.type
         self.setPetitRayon = 40 * self.type
@@ -290,8 +298,7 @@ class Partie:
         self.tempsDebut = time.time()
 
     def addScore(self):
-        """Permet d'augenter le score de cette partie
-        """
+        """Permet d'augenter le score de cette partie"""
         self.score += 5
         
     def getNom(self):

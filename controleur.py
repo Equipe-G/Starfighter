@@ -1,5 +1,5 @@
 from vue import JeuVue, MenuVue
-from modeles import Partie, Vaisseau, Projectile, Background, PowerUp, Asteroides, Ovni
+from modeles import Partie, Vaisseau, Projectile, Background, PowerUp, Asteroides, Ovni, Boss
 from c31Geometry2 import *
 import csv
 from time import sleep
@@ -17,7 +17,9 @@ class MenuControleur:
             Args:
                 root(tk): la fenetre tkinter 
                 jeuControleur(JeuControleur): controleur du jeu
+                gameQuit(Boolean): si le jeu est quitte
         """
+        self.gameQuit = False
         self.jeuControleur = jeuControleur
         self.vue = MenuVue(root, self.commencerJeu, self.afficherScore, self.quitter)
         self.vue.draw()
@@ -30,12 +32,12 @@ class MenuControleur:
         self.jeuControleur.genererJeu()
 
     def quitter(self):
-        """Quitte le jeu
-        """
+        """Quitte le jeu"""
         self.jeuControleur.vue.destroy(self.jeuControleur.vue.root)
+        self.gameQuit = True
+
     def afficherScore(self):
-        """Affiche les scores dans le fichier csv en les organisants du plus grand au plus petit
-        """
+        """Affiche les scores dans le fichier csv en les organisants du plus grand au plus petit"""
         # Lecture du fichier csv
         self.dataRead = []
         self.string = ""
@@ -70,8 +72,6 @@ class JeuControleur:
         vue: la vue du jeu
         moving: si le joueur bouge
         released: si le bouton de souris et relache
-        i: loop du jeu? //a completer
-        j: pas utilisé? // a completer
         partie: les attributs de la la partie actuelle
         partieEnCours: si la partie est active
         canvasJeu: le canvas tkinter
@@ -83,18 +83,16 @@ class JeuControleur:
     """
     def __init__(self, root):
         """Permet de definir un controleur de jeu et affiche le jeu
-            Initialise moving, released, i, j, root, partie et vue
+            Initialise moving, root, partie et vue
             Args:
                 root(tk): la fenetre tkinter 
         """
         self.root = root
         self.vue = JeuVue(root)
         self.moving = False
-        #self.released = False
-        self.i = 0
-        self.j = 0
 
     def genererJeu(self):
+        """Permet de générer le jeu à chaque nouvelle partie"""
         self.partieEnCours = False
         self.canvasJeu = self.vue.getCanvas()
         self.background = Background()
@@ -112,19 +110,18 @@ class JeuControleur:
         self.powerUps = []  
         self.__defineEvent()
 
-    def demarrerPartie(self):
-        return self.partieEnCours
-
     def __defineEvent(self):
+        """Definit les evenements possibles"""
         self.vue.setListen("<ButtonRelease-1>", self.buttonReleased)
         self.vue.setListen("<Motion>", self.isMoving)
         self.vue.setListen("<Escape>", self.pauserJeu)
 
     def buttonReleased(self, event):
-        #self.released = True
+        """Action lorsque le bouton est relaché : récupère position du curseur et démarre partie"""
         self.tirerProjectile()
 
     def isMoving(self, event):
+        """Action lorsque la souris est bougé : récupère position du curseur et démarre partie"""
         self.moving = True
         self.x = event.x
         self.y = event.y
@@ -143,6 +140,7 @@ class JeuControleur:
             self.e.start()
 
     def roulerJeu(self):
+        """La boucle de jeu"""
         if(self.vaisseau.getVie() > 0):
             self.initAsteroide()
             self.initOvnis()
@@ -160,22 +158,20 @@ class JeuControleur:
 
     def terminerPartie(self):
         """Termine la partie actuelle
-            Enleve le canevas, arrête la boucle et sauvegarde le score
+            sauvegarde le score, enleve le canvas, finis la boucle
         """
         self.sauverScore()
         self.vue.destroy(self.vue.root)
         self.e.stop()
-        self.genererJeu() #Besoind de ca? C'est pas le menu qui va en créer une autre apres?
-        sleep(1)
 
     def verifierCollision(self):
-
+        """Verifie si le vaisseau colisionne avec un ovni ou une asteroide"""
         for o in self.ovnis:
             if self.vaisseau.getOrigine().x + 50 >= o.getOrigine().x:
                 if self.vaisseau.getOrigine().x <= o.getOrigine().x + 50:
                     if self.vaisseau.getOrigine().y + 10 >= o.getOrigine().y:
                         if self.vaisseau.getOrigine().y <= o.getOrigine().y + 10:
-                            self.vaisseau.setVie(self.vaisseau.getVie() - 10)
+                            self.vaisseau.setVie(self.vaisseau.getVie() - 25)
                             self.ovnis.remove(o)
         for a in self.asteroide:
             if self.vaisseau.getOrigine().x + 50 >= a.getOrigine().x:
@@ -184,38 +180,9 @@ class JeuControleur:
                         if self.vaisseau.getOrigine().y <= a.getOrigine().y + 300:
                             self.vaisseau.setVie(self.vaisseau.getVie() - 50)
                             self.asteroide.remove(a)
-                            
-        """
-        vertex = [] #du vaisseau
-        vertex.append(Vecteur(self.vaisseau.getOrigine().x - self.vaisseau.petitRayon/2, self.vaisseau.getOrigine().y - self.vaisseau.petitRayon/2)) #haut-gauche
-        vertex.append(Vecteur(self.vaisseau.getOrigine().x + self.vaisseau.petitRayon/2, self.vaisseau.getOrigine().y - self.vaisseau.petitRayon/2)) #haut-droite
-        vertex.append(Vecteur(self.vaisseau.getOrigine().x + self.vaisseau.petitRayon/2, self.vaisseau.getOrigine().y + self.vaisseau.petitRayon/2)) #bas-droite
-        vertex.append(Vecteur(self.vaisseau.getOrigine().x - self.vaisseau.petitRayon/2, self.vaisseau.getOrigine().y + self.vaisseau.petitRayon/2)) #bas-gauche
-
-        for o in self.ovnis :
-            vertexOvni = []
-            vertexOvni.append(Vecteur(o.getOrigine().x - o.petitRayon/2, o.getOrigine().y - o.petitRayon/2)) #vertex haut-gauche
-            vertexOvni.append(Vecteur(o.getOrigine().x + o.petitRayon/2, o.getOrigine().y + o.petitRayon/2)) #vertex bas-droit
-
-            for i in range (0, 4):
-                if vertex[i].x >= vertexOvni[0].x and vertex[i].x <= vertexOvni[1].x and vertex[i].y >= vertexOvni[0].y and vertex[i].y <= vertexOvni[1].y :
-                    print("collision")
-                    return True
-        
-        for a in self.asteroide :
-            vertexAst = []
-            vertexAst.append(Vecteur(a.getOrigine().x - a.petitRayon/2, a.getOrigine().y - a.petitRayon/2)) #vertex haut-gauche
-            vertexAst.append(Vecteur(a.getOrigine().x + a.petitRayon/2, a.getOrigine().y + a.petitRayon/2)) #vertex bas-droit
-
-            for i in range (0,4):
-                if vertex[i].x >= vertexAst[0].x and vertex[i].x <= vertexAst[1].x and vertex[i].y >= vertexAst[0].y and vertex[i].y <= vertexAst[1].y :
-                    print("collision")
-                    return True
-        """
-
+                        
     def deplacementLogiqueVaisseau(self, x, y):
-        """Verifie le type de mouvement necessaire par le vaisseau puis appelle deplacementVaisseau
-        """
+        """Verifie le type de mouvement necessaire par le vaisseau puis appelle deplacementVaisseau"""
         vitesse = self.vaisseau.getVitesse()
         if x > self.vaisseau.get_origine().x and y < self.vaisseau.get_origine().y : #curseur est au nord-est
             self.deplacementVaisseau(self.vaisseau.get_origine().x + vitesse, self.vaisseau.get_origine().y - vitesse, 1)
@@ -237,8 +204,7 @@ class JeuControleur:
             self.deplacementVaisseau(self.vaisseau.get_origine().x, self.vaisseau.get_origine().y, 9)
                     
     def deplacementVaisseau(self, x, y, distance):
-        """Deplace le vaisseau vers la position de la souris
-        """
+        """Deplace le vaisseau vers la position de la souris"""
         bougeDistance = self.vaisseau.getVitesse()
         a = 0
         b = 0
@@ -275,8 +241,7 @@ class JeuControleur:
         self.vue.updateObjet(self.vaisseau, a, b)
 
     def tirerProjectile(self):
-        """Tire un projectile
-        """
+        """Tire un projectile"""
         y = self.vaisseau.getOrigine().y
         deplacement = Vecteur(self.vaisseau.getOrigine().x, y)
         self.projectile.translateTo(deplacement)
@@ -290,6 +255,7 @@ class JeuControleur:
             self.collisionProjectile(y)
 
     def initPowerUp(self):
+        """"As une chance de generer un powerup"""
         if random.randint(0, 1000) <= self.powerUpSpawnRate:
             x = random.randint(50, 950)
             y = -10
@@ -304,16 +270,21 @@ class JeuControleur:
             self.vue.drawObjet(powerUp)
 
     def initOvnis(self):
+        """"As une chance de generer un ovni normal ou un boss"""
         if(random.randint(0, 1000) <= self.ovnisSpawnRate):
             x = random.randint(50, 900)
             pos = Vecteur(x, -20)
-            newOvni = Ovni(self.canvasJeu, pos, random.randint(15, 295))
+            if(random.randint(0, 100) >= 5):
+                newOvni = Ovni(self.canvasJeu, pos, random.randint(15, 295))
+            else:
+                newOvni = Boss(self.canvasJeu, pos, random.randint(15, 295))
             self.ovnis.append(newOvni)            
             newOvni.translateTo(pos)
             newOvni.modificationPos(pos)
             self.vue.drawObjet(newOvni)
 
     def initAsteroide(self):
+        """"As une chance de generer une asteroide"""
         if(random.randint(0, 1000) <= self.asteroideSpawnRate):
             x = random.randint(50, 900)
             pos = Vecteur(x, -20)
@@ -324,8 +295,7 @@ class JeuControleur:
             self.vue.drawObjet(newAsteroide)
 
     def deplacementPowerUp(self):
-        """Deplace les powerUps
-        """
+        """Deplace les powerUps"""
         for p in self.powerUps:
             newPos = Vecteur(p.getOrigine().x, p.getOrigine().y + 1)
             p.translateTo(newPos)
@@ -336,8 +306,7 @@ class JeuControleur:
                 self.powerUps.remove(p)
 
     def deplacementAsteroide(self):
-        """Deplace les asteroides vers le bas de la page
-        """
+        """Deplace les asteroides vers le bas de la page"""
         for a in self.asteroide :
             newPos = Vecteur(a.getOrigine().x, a.getOrigine().y + 1)
             a.translateTo(newPos)
@@ -348,9 +317,7 @@ class JeuControleur:
                 self.asteroide.remove(a)
 
     def deplacementOvni(self):
-        """Deplace les ovnis
-            //a completer
-        """
+        """Deplace les ovnis vers le bas de la page"""
         for o in self.ovnis:
             newPos = Vecteur(o.getOrigine().x, o.getOrigine().y + 1)
             o.translateTo(newPos)
@@ -361,8 +328,7 @@ class JeuControleur:
                 self.ovnis.remove(o)
 
     def ramasserPowerUp(self):
-        """Verifie si le vaisseau a ramasser un powerUp
-        """
+        """Verifie si le vaisseau a ramasser un powerUp"""
         for p in self.powerUps:
             if self.vaisseau.getOrigine().x + 130 >= p.getOrigine().x:
                 if self.vaisseau.getOrigine().x <= p.getOrigine().x + 130:
@@ -372,12 +338,11 @@ class JeuControleur:
                             self.powerUps.remove(p)
 
     def collisionProjectile(self, y):
-        """Verifie si le projectile a touché un objet
-        """
+        """Verifie si le projectile a touché un objet"""
         for o in self.ovnis:
             if self.projectile.getOrigine().x + 50 >= o.getOrigine().x:
                 if self.projectile.getOrigine().x <= o.getOrigine().x + 50:
-                    if self.vaisseau.getOrigine().y + 900 >= o.getOrigine().y:
+                    if self.vaisseau.getOrigine().y >= o.getOrigine().y:
                         if self.vaisseau.getOrigine().y <= o.getOrigine().y + 900:
                             o.enleverVie(10)
                             self.partie.addScore()
@@ -386,19 +351,19 @@ class JeuControleur:
         for a in self.asteroide:
             if self.projectile.getOrigine().x + 50 >= a.getOrigine().x:
                 if self.projectile.getOrigine().x <= a.getOrigine().x + 50:
-                    if self.vaisseau.getOrigine().y + 900 >= a.getOrigine().y:
+                    if self.vaisseau.getOrigine().y >= a.getOrigine().y:
                         if self.vaisseau.getOrigine().y <= a.getOrigine().y + 900:
                             a.enleverVie(5)
                             if a.getVie() <= 0:
                                 self.asteroide.remove(a)
 
     def sauverScore(self):
-        """Permet d'ajouter les informations de cette session dans le fichier csv
-        """
+        """Permet d'ajouter les informations de cette session dans le fichier csv"""
         with open('FichierScores.csv', 'a') as csvFile :
             ecriture_score = csv.writer(csvFile, delimiter=',')
             texte = [self.partie.getNom(), str(self.partie.getTemps()), self.partie.getScore()]
             ecriture_score.writerow(texte)
 
     def pauserJeu(self, event):
+        """Permet d'ajouter les informations de cette session dans le fichier csv"""
         sleep(5)
