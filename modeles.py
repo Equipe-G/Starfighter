@@ -144,19 +144,21 @@ class PowerUp(objetVolant):
 
         super().__init__(canvas, 0, 1, 30, 45, origine, self.lienImage, 30, 45)
 
-    def activerPouvoir(self, vaisseau, projectile):
+    def activerPouvoir(self, vaisseau):
         """Active le powerup"""
         if self.power == 1:
             vaisseau.setVitesse(8)
+            return 1
         elif self.power == 2:
             vaisseau.setVie(vaisseau.getVie() + 15)
+            return 1
         elif self.power == 3:
-            projectile.updateArme(2)
+           return 2
 
-    def desactiverPouvoir(self, vaisseau, projectile):
+    def desactiverPouvoir(self, vaisseau):
         """Desactive le powerup"""
         vaisseau.setVitesse(4)
-        projectile.updateArme(1)
+        return 1
 
 class Projectile(objetVolant):
     """Cette classe est represente un projectile tire par un vaisseau ou ovni (Herite de ObjetVolant)
@@ -175,26 +177,7 @@ class Projectile(objetVolant):
         self.type = type
         self.lienImage = "Image/Lazer.png"
         self.id = ""
-        super().__init__(canvas, 10, 1, 40, 40, origine, self.lienImage, 20, 40)
-
-    def getType(self):
-        """Permet de récupérer le types de projectile
-        Returns:
-            type: type de projectile
-        """
-        return self.type
-
-    def updateArme(self, type):
-        """Permet de changer la taille du projectile
-        Returns:
-            type: type de projectile
-        """
-        self.type = type
-        self.setGrandRayon = 40 * self.type
-        self.setPetitRayon = 40 * self.type
-        self.xImage = 40 * self.type
-        self.yImage = 40 * self.type
-        self.updateImage()
+        super().__init__(canvas, 15, 1, 40 * self.type, 40 * self.type, origine, self.lienImage, 20 * self.type, 40 * self.type)
         
 class Vaisseau(objetVolant):
     """Cette classe est represente le vaisseau du joueur (Herite de ObjetVolant)
@@ -300,9 +283,9 @@ class Partie:
         self.nomJoueur = nom
         self.tempsDebut = time.time()
 
-    def addScore(self):
+    def addScore(self, score):
         """Permet d'augenter le score de cette partie"""
-        self.score += 5
+        self.score += score
         
     def getNom(self):
         """Permet de récupérer nom du joueur cette partie
