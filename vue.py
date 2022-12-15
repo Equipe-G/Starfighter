@@ -88,6 +88,7 @@ class JeuVue:
         Args:
             temp(String(format)) : le score de la partie
         """
+        score = str(score)
         self.canvas.itemconfig(self.idScore, text = "Score : " + score  ) 
 
     def setVie(self,vie) :
@@ -96,7 +97,8 @@ class JeuVue:
         Args:
             temp(String(format)) : les point de vie du vaisseau
         """
-        self.canvas.itemconfig(self.idVIe, text = "Vie : "  + vie + "%" )
+        vie = str(vie)
+        self.canvas.itemconfig(self.idVIe, text = "Vie : "  + vie)
 
     def drawObjet(self, objet):
         """Permet de dessiner tous les objet ayant un sprite valide(une image)

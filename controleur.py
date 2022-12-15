@@ -90,7 +90,7 @@ class JeuControleur:
         self.root = root
         self.vue = JeuVue(root)
         self.moving = False
-        self.released = False
+        #self.released = False
         self.i = 0
         self.j = 0
 
@@ -102,16 +102,14 @@ class JeuControleur:
         self.vue.drawFond(self.background.imageTk)
         self.vaisseau = Vaisseau(self.canvasJeu)
         self.vue.drawObjet(self.vaisseau)
-        self.projectile = Projectile(self.canvasJeu, self.vaisseau.getOrigine())
+        self.typeArme = 1
+        self.projectile = Projectile(self.canvasJeu, self.vaisseau.getOrigine(), self.typeArme)
         self.asteroideSpawnRate = 1
-        self.ovnisSpawnRate = 3
-        self.powerUpSpawnRate = 2
+        self.ovnisSpawnRate = 5
+        self.powerUpSpawnRate = 1
         self.ovnis = []
         self.asteroide = []
-        self.powerUps = []
-        self.vue.setScore("0")
-        self.vue.setVie("100")
-   
+        self.powerUps = []  
         self.__defineEvent()
 
     def demarrerPartie(self):
@@ -120,10 +118,10 @@ class JeuControleur:
     def __defineEvent(self):
         self.vue.setListen("<ButtonRelease-1>", self.buttonReleased)
         self.vue.setListen("<Motion>", self.isMoving)
+        self.vue.setListen("<Escape>", self.pauserJeu)
 
     def buttonReleased(self, event):
-        self.pressed = False
-        self.released = True
+        #self.released = True
         self.tirerProjectile()
 
     def isMoving(self, event):
@@ -155,18 +153,20 @@ class JeuControleur:
             self.deplacementPowerUp()
             self.ramasserPowerUp()
             self.verifierCollision()
+            self.vue.setScore(self.partie.getScore())
+            self.vue.setVie(self.vaisseau.getVie())
         else:
             self.terminerPartie()
 
     def terminerPartie(self):
         """Termine la partie actuelle
-            Enleve le canevas, arrête la boucle, puis sauvegarde le score
+            Enleve le canevas, arrête la boucle et sauvegarde le score
         """
+        self.sauverScore()
         self.vue.destroy(self.vue.root)
         self.e.stop()
         self.genererJeu() #Besoind de ca? C'est pas le menu qui va en créer une autre apres?
         sleep(1)
-        #self.sauverScore()
 
     def verifierCollision(self):
 
@@ -175,13 +175,16 @@ class JeuControleur:
                 if self.vaisseau.getOrigine().x <= o.getOrigine().x + 50:
                     if self.vaisseau.getOrigine().y + 10 >= o.getOrigine().y:
                         if self.vaisseau.getOrigine().y <= o.getOrigine().y + 10:
-                            print("mort")
+                            self.vaisseau.setVie(self.vaisseau.getVie() - 10)
+                            self.ovnis.remove(o)
         for a in self.asteroide:
             if self.vaisseau.getOrigine().x + 50 >= a.getOrigine().x:
                 if self.vaisseau.getOrigine().x <= a.getOrigine().x + 50:
                     if self.vaisseau.getOrigine().y + 300 >= a.getOrigine().y:
                         if self.vaisseau.getOrigine().y <= a.getOrigine().y + 300:
-                            print("mort")
+                            self.vaisseau.setVie(self.vaisseau.getVie() - 50)
+                            self.asteroide.remove(a)
+                            
         """
         vertex = [] #du vaisseau
         vertex.append(Vecteur(self.vaisseau.getOrigine().x - self.vaisseau.petitRayon/2, self.vaisseau.getOrigine().y - self.vaisseau.petitRayon/2)) #haut-gauche
@@ -273,7 +276,6 @@ class JeuControleur:
 
     def tirerProjectile(self):
         """Tire un projectile
-            //j'ai des questions sur cette methode
         """
         y = self.vaisseau.getOrigine().y
         deplacement = Vecteur(self.vaisseau.getOrigine().x, y)
@@ -295,6 +297,7 @@ class JeuControleur:
             affichage = Vecteur(x, y)
 
             powerUp = PowerUp(self.canvasJeu, affichage, power)
+            powerUp.desactiverPouvoir(self.vaisseau, self.projectile)
             self.powerUps.append(powerUp)
             powerUp.translateTo(affichage)
             powerUp.modificationPos(affichage)
@@ -365,8 +368,8 @@ class JeuControleur:
                 if self.vaisseau.getOrigine().x <= p.getOrigine().x + 130:
                     if self.vaisseau.getOrigine().y + 130 >= p.getOrigine().y:
                         if self.vaisseau.getOrigine().y <= p.getOrigine().y + 130:
+                            p.activerPouvoir(self.vaisseau, self.projectile)
                             self.powerUps.remove(p)
-                            #! Ajouter l effet du powerUp ici
 
     def collisionProjectile(self, y):
         """Verifie si le projectile a touché un objet
@@ -376,13 +379,18 @@ class JeuControleur:
                 if self.projectile.getOrigine().x <= o.getOrigine().x + 50:
                     if self.vaisseau.getOrigine().y + 900 >= o.getOrigine().y:
                         if self.vaisseau.getOrigine().y <= o.getOrigine().y + 900:
-                            self.ovnis.remove(o)
+                            o.enleverVie(10)
+                            self.partie.addScore()
+                            if o.getVie() <= 0:
+                                self.ovnis.remove(o)
         for a in self.asteroide:
             if self.projectile.getOrigine().x + 50 >= a.getOrigine().x:
                 if self.projectile.getOrigine().x <= a.getOrigine().x + 50:
                     if self.vaisseau.getOrigine().y + 900 >= a.getOrigine().y:
                         if self.vaisseau.getOrigine().y <= a.getOrigine().y + 900:
-                            self.asteroide.remove(a)
+                            a.enleverVie(5)
+                            if a.getVie() <= 0:
+                                self.asteroide.remove(a)
 
     def sauverScore(self):
         """Permet d'ajouter les informations de cette session dans le fichier csv
@@ -391,3 +399,6 @@ class JeuControleur:
             ecriture_score = csv.writer(csvFile, delimiter=',')
             texte = [self.partie.getNom(), str(self.partie.getTemps()), self.partie.getScore()]
             ecriture_score.writerow(texte)
+
+    def pauserJeu(self, event):
+        sleep(5)

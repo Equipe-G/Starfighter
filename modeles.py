@@ -25,15 +25,24 @@ class objetVolant(Oval):
                 vie(int): vie de l'objet
                 vitesse(int): vitesse de l'objet
                 lienImage(string): chemin relatif de l'image de l'objet
-        """ 
+        """
+        self.xImage = xImage
+        self.yImage = yImage 
         self.vitesse = vitesse
         self.vie = vie
         self.petitRayon = petitRayon
         self.grandRayon = grandRayon
         self.imageBase = Image.open(lienImage)
-        self.image = self.imageBase.resize((xImage,yImage), Image.ANTIALIAS)
+        self.image = self.imageBase.resize((self.xImage,self.yImage), Image.ANTIALIAS)
         self.imageTk = ImageTk.PhotoImage(self.image)
         super().__init__(canvas, origine, self.petitRayon, self.grandRayon, "white", "white", 0)
+
+    def updateImage(self):
+        self.image = self.imageBase.resize((self.xImage,self.yImage), Image.ANTIALIAS)
+        self.imageTk = ImageTk.PhotoImage(self.image)
+
+    def enleverVie(self, degats):
+        self.setVie(self.getVie() - degats)
 
     def getOrigine(self) -> Vecteur:
         """Permet de récupérer l'origine de l'objet
@@ -134,20 +143,19 @@ class PowerUp(objetVolant):
 
         super().__init__(canvas, 0, 1, 30, 45, origine, self.lienImage, 30, 45)
 
-    def activerPouvoir(self, vaisseau):
+    def activerPouvoir(self, vaisseau, projectile):
         if self.power == 1:
-            vaisseau.setVitesse(20)
+            vaisseau.setVitesse(8)
         elif self.power == 2:
             vaisseau.setVie(vaisseau.getVie() + 15)
         elif self.power == 3:
-            self.power = self.power #placeholder
+            projectile.updateArme(2)
         #pour en faire un avec la taille du vasseau faudrais changer petit rayon grand rayon et resize l'image
 
-    def desactiverPouvoir(self, vaisseau):
-        if self.power == 1:
-            vaisseau.setVitesse(10)
-        elif self.power == 3:
-            self.power = self.power #placeholder
+    def desactiverPouvoir(self, vaisseau, projectile):
+        vaisseau.setVitesse(4)
+        projectile.updateArme(1)
+
     
     
 
@@ -159,7 +167,7 @@ class Projectile(objetVolant):
         Ceux de la superclasse ObjetVolant
         type(int): type de projectile
     """ 
-    def __init__(self, canvas, origine, type = 1):
+    def __init__(self, canvas, origine, type):
         """Permet de definir un projectile 
 
         Initialise super et imageTk
@@ -172,6 +180,13 @@ class Projectile(objetVolant):
         super().__init__(canvas, 10, 1, 40, 40, origine, self.lienImage, 20, 40)
     def getType(self):
         return self.type
+    def updateArme(self, type):
+        self.type = type
+        self.setGrandRayon = 40 * self.type
+        self.setPetitRayon = 40 * self.type
+        self.xImage = 40 * self.type
+        self.yImage = 40 * self.type
+        self.updateImage()
         
 class Vaisseau(objetVolant):
     """Cette classe est represente le vaisseau du joueur (Herite de ObjetVolant)
@@ -188,7 +203,7 @@ class Vaisseau(objetVolant):
         """ 
         self.lienImage = "Image/Vaisseau.png"
         self.id = ""
-        super().__init__(canvas, 3, 100, 200, 200 , Vecteur(500, 900), self.lienImage, 160, 200)
+        super().__init__(canvas, 4, 100, 200, 200 , Vecteur(500, 900), self.lienImage, 160, 200)
 
 class Ovni(objetVolant):
     """Cette classe est represente un ovni ennemi (Herite de ObjetVolant)
@@ -207,7 +222,7 @@ class Ovni(objetVolant):
         self.maxY = maxY
         self.lienImage = "Image/Alien.png"
         self.id = ""
-        super().__init__(canvas, 1, 25, taille, taille, origine, self.lienImage, taille, taille)
+        super().__init__(canvas, 1, 30, taille, taille, origine, self.lienImage, taille, taille)
         
     def getMaxY(self):
         """Permet de récupérer le maxY de l'ovni
@@ -215,6 +230,7 @@ class Ovni(objetVolant):
             int: le plus haut que l'ovni peut aller
         """
         return self.maxY
+
 
 class Boss(Ovni):
     """Cette classe est represente un boss ennemi (Herite de Ovni)
@@ -245,7 +261,7 @@ class Asteroides(objetVolant):
         """ 
         self.lienImage = "Image/asteroide.png"
         self.id = "" 
-        super().__init__(canvas, 3, 10, 80, 80, origine, self.lienImage, 80, 80)
+        super().__init__(canvas, 3, 10, 80, 60, origine, self.lienImage, 80, 80)
 
 class Background:
     """Cette classe est represente l'arriere plan
@@ -271,8 +287,8 @@ class Partie:
         """
         self.score = 0
         self.nomJoueur = nom
-        self.tempsDebut = time.time()  
-        
+        self.tempsDebut = time.time()
+
     def addScore(self):
         """Permet d'augenter le score de cette partie
         """
@@ -298,3 +314,4 @@ class Partie:
             double: temps passé depuis début de la partie
         """
         return round((time.time() - self.tempsDebut), 2)
+
