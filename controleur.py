@@ -270,6 +270,7 @@ class JeuControleur:
             self.projectile.translateTo(deplacement)
             self.projectile.modificationPos(deplacement)
             self.vue.updateObjet(self.projectile, 0, -1.5)
+            self.collisionProjectile(y)
 
     def initPowerUp(self):
         if random.randint(0, 1000) <= self.powerUpSpawnRate:
@@ -345,9 +346,28 @@ class JeuControleur:
         """Verifie si le vaisseau a ramasser un powerUp
         """
         for p in self.powerUps:
-            if self.vaisseau.getOrigine().x + 10 >= p.getOrigine().x and self.vaisseau.getOrigine().x <= p.getOrigine().x + 10 and self.vaisseau.getOrigine().y + 10 >= p.getOrigine().y and self.vaisseau.getOrigine().y <= p.getOrigine().y + 10:
-                self.powerUps.remove(p)
-                print("PowerUp ramasse")
+            if self.vaisseau.getOrigine().x + 130 >= p.getOrigine().x:
+                if self.vaisseau.getOrigine().x <= p.getOrigine().x + 130:
+                    if self.vaisseau.getOrigine().y + 130 >= p.getOrigine().y:
+                        if self.vaisseau.getOrigine().y <= p.getOrigine().y + 130:
+                            self.powerUps.remove(p)
+                            #! Ajouter l effet du powerUp ici
+
+    def collisionProjectile(self, y):
+        """Verifie si le projectile a touché un objet
+        """
+        for o in self.ovnis:
+            if self.projectile.getOrigine().x + 50 >= o.getOrigine().x:
+                if self.projectile.getOrigine().x <= o.getOrigine().x + 50:
+                    if self.vaisseau.getOrigine().y + 900 >= o.getOrigine().y:
+                        if self.vaisseau.getOrigine().y <= o.getOrigine().y + 900:
+                            self.ovnis.remove(o)
+        for a in self.asteroide:
+            if self.projectile.getOrigine().x + 50 >= a.getOrigine().x:
+                if self.projectile.getOrigine().x <= a.getOrigine().x + 50:
+                    if self.vaisseau.getOrigine().y + 900 >= a.getOrigine().y:
+                        if self.vaisseau.getOrigine().y <= a.getOrigine().y + 900:
+                            self.asteroide.remove(a)
 
     def sauverScore(self):
         """Permet d'ajouter les informations de cette session dans le fichier csv
