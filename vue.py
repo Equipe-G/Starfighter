@@ -29,7 +29,7 @@ class MenuVue:
         self.score = tk.Label(root,text="")
     
     def setScore(self,score):
-        self.score.config(score)
+        self.score.config(text= "Nom    Temps   Score \n" + score )
         self.score.pack()
     def draw(self):
         """ dessine le menu graphique et tout les boutons"""
