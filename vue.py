@@ -26,9 +26,11 @@ class MenuVue:
                                      command=closeApp)
         self.btn_voirScore = tk.Button(root, text='Meilleur score',
                                             command=voirScore)
-
+        self.score = tk.Label(root,text="")
     
-
+    def setScore(self,score):
+        self.score.config(score)
+        self.score.pack()
     def draw(self):
         """ dessine le menu graphique et tout les boutons"""
         self.frame.pack()
