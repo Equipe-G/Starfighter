@@ -51,15 +51,15 @@ class MenuControleur:
 
         # Triage selon le meilleur
         for i in range(0, len(self.dataRead)):
-            for j in range(i+1, len(self.dataRead)):
-                if float(self.dataRead[j][1]) >= float(self.dataRead[i][1]):
+            for j in range(i+1, len(self.dataRead[i])):
+                if float(self.dataRead[j][2]) >= float(self.dataRead[i][2]):
                     temp = self.dataRead[i]
                     self.dataRead[i] = self.dataRead[j]
                     self.dataRead[j] = temp
 
         # Affichage de la string
-        for i in range(0, 10):
-            for j in range(0, 3):
+        for i in range(0, len(self.dataRead)):
+            for j in range(0,3):
                 self.string += str(self.dataRead[i][j])
                 self.string += "     "
             self.string += "\n"
