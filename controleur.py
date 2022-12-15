@@ -154,7 +154,7 @@ class JeuControleur:
             self.deplacementOvni()
             self.deplacementPowerUp()
             self.ramasserPowerUp()
-            #self.verifierCollision()
+            self.verifierCollision()
         else:
             self.terminerPartie()
 
@@ -169,6 +169,20 @@ class JeuControleur:
         #self.sauverScore()
 
     def verifierCollision(self):
+
+        for o in self.ovnis:
+            if self.vaisseau.getOrigine().x + 50 >= o.getOrigine().x:
+                if self.vaisseau.getOrigine().x <= o.getOrigine().x + 50:
+                    if self.vaisseau.getOrigine().y + 10 >= o.getOrigine().y:
+                        if self.vaisseau.getOrigine().y <= o.getOrigine().y + 10:
+                            print("mort")
+        for a in self.asteroide:
+            if self.vaisseau.getOrigine().x + 50 >= a.getOrigine().x:
+                if self.vaisseau.getOrigine().x <= a.getOrigine().x + 50:
+                    if self.vaisseau.getOrigine().y + 300 >= a.getOrigine().y:
+                        if self.vaisseau.getOrigine().y <= a.getOrigine().y + 300:
+                            print("mort")
+        """
         vertex = [] #du vaisseau
         vertex.append(Vecteur(self.vaisseau.getOrigine().x - self.vaisseau.petitRayon/2, self.vaisseau.getOrigine().y - self.vaisseau.petitRayon/2)) #haut-gauche
         vertex.append(Vecteur(self.vaisseau.getOrigine().x + self.vaisseau.petitRayon/2, self.vaisseau.getOrigine().y - self.vaisseau.petitRayon/2)) #haut-droite
@@ -194,6 +208,7 @@ class JeuControleur:
                 if vertex[i].x >= vertexAst[0].x and vertex[i].x <= vertexAst[1].x and vertex[i].y >= vertexAst[0].y and vertex[i].y <= vertexAst[1].y :
                     print("collision")
                     return True
+        """
 
     def deplacementLogiqueVaisseau(self, x, y):
         """Verifie le type de mouvement necessaire par le vaisseau puis appelle deplacementVaisseau
