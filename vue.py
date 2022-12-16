@@ -28,7 +28,11 @@ class MenuVue:
                                             command=voirScore)
         self.score = tk.Label(root,text="")
     
-    def setScore(self,score):
+    def setScore(self, score):
+        """ Affiche les hiscore
+
+        :param score: string des scores dans le fichier csv
+        """
         self.score.config(text= "Nom    Temps   Score \n" + score )
         self.score.pack()
     def draw(self):

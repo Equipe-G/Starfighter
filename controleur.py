@@ -119,11 +119,15 @@ class JeuControleur:
         self.vue.setListen("<Escape>", self.pauserJeu)
 
     def buttonReleased(self, event):
-        """Action lorsque le bouton est relaché : récupère position du curseur et démarre partie"""
+        """Action lorsque le bouton est relaché : récupère position du curseur et démarre partie
+        :param event: evenement choisi
+        """
         self.initProjectile()
 
     def isMoving(self, event):
-        """Action lorsque la souris est bougé : récupère position du curseur et démarre partie"""
+        """Action lorsque la souris est bougé : récupère position du curseur et démarre partie
+        :param event: evenement choisi
+        """
         self.moving = True
         self.x = event.x
         self.y = event.y
@@ -140,7 +144,9 @@ class JeuControleur:
             self.e.start()
 
     def roulerJeu(self):
-        """La boucle de jeu"""
+        """La boucle de jeu
+            Deplace les objets, les dessine et les supprime
+        """
         if(self.vaisseau.getVie() > 0):
             self.initAsteroide()
             self.initOvnis()
@@ -168,7 +174,7 @@ class JeuControleur:
         self.e.stop()
 
     def verifierCollision(self):
-        """Verifie si le vaisseau colisionne avec un ovni ou une asteroide"""
+        """Verifie si le vaisseau est en collision avec un ovni ou une asteroide"""
         for o in self.ovnis:
             if self.vaisseau.getOrigine().x + 50 >= o.getOrigine().x:
                 if self.vaisseau.getOrigine().x <= o.getOrigine().x + 50:
@@ -270,7 +276,7 @@ class JeuControleur:
                 self.projectiles.remove(p)
 
     def initPowerUp(self):
-        """"As une chance de generer un powerup"""
+        """"A une chance de generer un powerup"""
         if random.randint(0, 1000) <= self.powerUpSpawnRate:
             x = random.randint(50, 950)
             y = -10
@@ -286,11 +292,11 @@ class JeuControleur:
             self.vue.drawObjet(powerUp)
 
     def initOvnis(self):
-        """"As une chance de generer un ovni normal ou un boss"""
+        """"A une chance de generer un ovni normal ou un boss"""
         if(random.randint(0, 1000) <= self.ovnisSpawnRate):
             x = random.randint(50, 900)
             pos = Vecteur(x, -20)
-            if(random.randint(0, 100) >= 15):
+            if(random.randint(0, 100) >= 7):
                 newOvni = Ovni(self.canvasJeu, pos, random.randint(15, 295))
             else:
                 newOvni = Boss(self.canvasJeu, pos, random.randint(15, 295))
@@ -300,7 +306,7 @@ class JeuControleur:
             self.vue.drawObjet(newOvni)
 
     def initAsteroide(self):
-        """"As une chance de generer une asteroide"""
+        """"A une chance de generer un asteroide"""
         if(random.randint(0, 1000) <= self.asteroideSpawnRate):
             x = random.randint(50, 900)
             pos = Vecteur(x, -20)
@@ -311,7 +317,7 @@ class JeuControleur:
             self.vue.drawObjet(newAsteroide)
 
     def deplacementPowerUp(self):
-        """Deplace les powerUps"""
+        """Deplace les powerUps vers le bas de la page"""
         for p in self.powerUps:
             newPos = Vecteur(p.getOrigine().x, p.getOrigine().y + 1)
             p.translateTo(newPos)
@@ -344,7 +350,7 @@ class JeuControleur:
                 self.ovnis.remove(o)
 
     def tirOvni(self):
-        """As une chance qu'un ovni tire un prjectile"""
+        """A une chance qu'un ovni tire un prjectile"""
         for o in self.ovnis:
             if random.randint(0,100) <= 1 :
                 newProjectile = Projectile(self.canvasJeu, o.getOrigine(),self.typeArmeOvni)
@@ -407,5 +413,7 @@ class JeuControleur:
             ecriture_score.writerow(texte)
 
     def pauserJeu(self, event):
-        """Permet d'ajouter les informations de cette session dans le fichier csv"""
+        """Permet de mettre le jeu en pause pendant 5 secondes
+        :param event: evenement choisi
+        """
         sleep(5)
