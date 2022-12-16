@@ -305,7 +305,7 @@ class JeuControleur:
     def deplacementPowerUp(self):
         """Deplace les powerUps"""
         for p in self.powerUps:
-            newPos = Vecteur(p.getOrigine().x, p.getOrigine().y + 1)
+            newPos = Vecteur(p.getOrigine().x, p.getOrigine().y + 2)
             p.translateTo(newPos)
             p.modificationPos(newPos)
             self.vue.updateObjet(p, 0, 2)
@@ -359,10 +359,10 @@ class JeuControleur:
     def ramasserPowerUp(self):
         """Verifie si le vaisseau a ramasser un powerUp"""
         for p in self.powerUps:
-            if self.vaisseau.getOrigine().x + 130 >= p.getOrigine().x:
-                if self.vaisseau.getOrigine().x <= p.getOrigine().x + 130:
-                    if self.vaisseau.getOrigine().y + 130 >= p.getOrigine().y:
-                        if self.vaisseau.getOrigine().y <= p.getOrigine().y + 130:
+            if self.vaisseau.getOrigine().x + 50 >= p.getOrigine().x:
+                if self.vaisseau.getOrigine().x <= p.getOrigine().x + 50:
+                    if self.vaisseau.getOrigine().y + 50 >= p.getOrigine().y:
+                        if self.vaisseau.getOrigine().y <= p.getOrigine().y + 50:
                             self.typeArmeVaisseau = p.activerPouvoir(self.vaisseau)
                             self.powerUps.remove(p)
 
